@@ -1,0 +1,80 @@
+body {
+	font-family: "Times New Roman", Times, serif;
+	color: #000000;
+}
+
+td {
+	font-family: "Times New Roman", Times, serif;
+	color: #000000;
+}
+
+th {
+	font-family: "Times New Roman", Times, serif;
+	color: #000000;
+}font {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 11%;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	color: #000000;
+}
+body {
+	background-color: #FFFF99;
+}
+h1 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 24pt;
+	color: #990000;
+	font-weight: normal;
+	text-decoration: none;
+}
+h2 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 126%;
+	font-weight: normal;
+	color: #990000;
+}
+p {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 100%;
+	color: #000000;
+}
+.style1 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 9em;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	font-variant: normal;
+	color: #000000;
+}
+h3 {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 126%;
+	font-weight: normal;
+	color: #000000;
+}
+small {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 90%;
+	font-weight: normal;
+	color: #000000;
+}
+.style2 {
+	font-size: 81%;
+	color: #000000;
+}
+.style3 {
+	color: #FF0000;
+}
+h5 {
+	font-family: "Times New Roman", Times, serif;
+	color: #000000;
+	font-size: 144%;
+}
+p {
+	font-family: "Times New Roman", Times, serif;
+	font-size: 12pt;
+	color: #000000;
+}

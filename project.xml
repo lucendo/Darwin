@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <pomVersion>3</pomVersion>
+  <artifactId>darwin</artifactId>
+  <name>Darwin Site and Search Engine</name>
+  <groupId>darwin</groupId>
+  <currentVersion>0.8</currentVersion>
+  <inceptionYear>2005</inceptionYear>
+  <logo>/images/logo.gif</logo>
+  <mailingLists>
+    <mailingList>
+      <name>${pom.name} Dev List</name>
+    </mailingList>
+    <mailingList>
+      <name>${pom.name} User List</name>
+    </mailingList>
+  </mailingLists>
+  <dependencies>
+    <dependency>
+      <groupId>ponderutilcore</groupId>
+      <artifactId>ponderutilcore</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>j-servletutil</groupId>
+      <artifactId>j-servletutil</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.9</version>
+      <type>jar</type>
+    </dependency>
+  <dependency>
+      <groupId>xpp3</groupId>
+      <artifactId>xpp3</artifactId>
+      <version>1.1.3.4-RC8_min</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+      </includes>
+    </unitTest>
+    <resources>
+      <resource>
+        <directory>src/conf/</directory>
+        <targetPath>conf</targetPath>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>
+
