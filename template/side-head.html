@@ -1,3 +1,4 @@
+<html xmlns:rsf="http://ponder.org.uk/rsf">
 <head>
 <link href="level1_times.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
@@ -57,8 +58,8 @@ function updatePage() {
     }
   var lastpage = Number(getValue("last-page"));
   getElement("next-button").disabled = (currentpage >= lastpage);
-  var texttarget=getValue("text-target::"+currentpage);
-  var imagetarget=getValue("image-target::"+currentpage);
+  var texttarget=getValue("text-target:::"+currentpage);
+  var imagetarget=getValue("image-target:::"+currentpage);
 
   var textframe = getElementGlob(window.parent.document, "txt-frame");
   textframe.src = texttarget;
@@ -98,14 +99,14 @@ function onPageSelect() {
 </head>
 <body onload="updatePage()">
 <div class="hidden">
-<div rsf:id="text-target:" id="text-target::1">dummy/1843_remarks_F1662.html#pageseq-1</div>
-<div rsf:id="text-target:" id="text-target::2">dummy/1843_remarks_F1662.html#pageseq-2</div>
-<div rsf:id="text-target:" id="text-target::3">dummy/1843_remarks_F1662.html#pageseq-3</div>
-<div rsf:id="text-target:" id="text-target::4">dummy/1843_remarks_F1662.html#pageseq-4</div>
-<div rsf:id="image-target:" id="image-target::1">dummy/1843_remarks_F1662_1.png</div>
-<div rsf:id="image-target:" id="image-target::2">dummy/1843_remarks_F1662_2.png</div>
-<div rsf:id="image-target:" id="image-target::3">dummy/1843_remarks_F1662_3.png</div>
-<div rsf:id="image-target:" id="image-target::4">dummy/1843_remarks_F1662_4.png</div>
+<div rsf:id="text-target:" id="text-target:::1">dummy/1843_remarks_F1662.html#pageseq-1</div>
+<div rsf:id="text-target:" id="text-target:::2">dummy/1843_remarks_F1662.html#pageseq-2</div>
+<div rsf:id="text-target:" id="text-target:::3">dummy/1843_remarks_F1662.html#pageseq-3</div>
+<div rsf:id="text-target:" id="text-target:::4">dummy/1843_remarks_F1662.html#pageseq-4</div>
+<div rsf:id="image-target:" id="image-target:::1">dummy/1843_remarks_F1662_1.png</div>
+<div rsf:id="image-target:" id="image-target:::2">dummy/1843_remarks_F1662_2.png</div>
+<div rsf:id="image-target:" id="image-target:::3">dummy/1843_remarks_F1662_3.png</div>
+<div rsf:id="image-target:" id="image-target:::4">dummy/1843_remarks_F1662_4.png</div>
 <div rsf:id="current-page" id="current-page">1</div>
 <div rsf:id="last-page" id="last-page">4</div>
 </div>
@@ -114,14 +115,14 @@ function onPageSelect() {
 <img src="title8.jpg" width="734" height="43" />
 </div>
 <div class="center">
-<input type="button" id="back-button" value=" < Back" onclick="pageBack()" />
+<input type="button" id="back-button" value=" &lt; Back" onclick="pageBack()" />
 <select rsf:id="page-select" id="page-select" onChange="onPageSelect()">
 <option value="1" selected>page 47</option>
 <option value="2">page 48</option>
 <option value="3">page 49</option>
 <option value="4">page 50</option>
 </select>
-<input type="button" id="next-button" value="Next >" onclick="pageNext()" />
+<input type="button" id="next-button" value="Next &gt;" onclick="pageNext()" />
 </div>
 </div>
 </form>
