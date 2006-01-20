@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.darwin.parse;
 
+import java.util.HashMap;
+
 import org.xmlpull.v1.XmlPullParser;
 
 import uk.org.ponder.darwin.item.ContentInfo;
@@ -46,7 +48,16 @@ public class AccretingParseReceiver implements ParseReceiver {
     
   }
 
+  public void text(XmlPullParser parser, int token, CharWrap text) {
+    // TODO Auto-generated method stub
+    
+  }
 
+  public void protoTag(String tagname, String clazz, HashMap attrmap) {
+    // TODO Auto-generated method stub
+    
+  }
+  
   public void metObject(Object tagobj) {
     if (tagobj instanceof DocumentTag) {
       DocumentTag doc = (DocumentTag) tagobj;
@@ -86,11 +97,6 @@ public class AccretingParseReceiver implements ParseReceiver {
     details = null;
     currentpage = 0;
     content = null;
-  }
-
-  public void text(XmlPullParser parser, int token, CharWrap text) {
-    // TODO Auto-generated method stub
-    
   }
 
 }
