@@ -3,6 +3,9 @@
  */
 package uk.org.ponder.darwin.parse;
 
+import uk.org.ponder.darwin.item.CheckStatistics;
+import uk.org.ponder.darwin.item.ItemChecks;
+import uk.org.ponder.darwin.item.ItemCollection;
 import uk.org.ponder.streamutil.write.PrintStreamPOS;
 import uk.org.ponder.stringutil.StringList;
 

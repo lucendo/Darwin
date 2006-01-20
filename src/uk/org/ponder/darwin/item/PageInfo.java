@@ -1,7 +1,7 @@
 /*
  * Created on 31-Oct-2005
  */
-package uk.org.ponder.darwin.parse;
+package uk.org.ponder.darwin.item;
 
 import uk.org.ponder.util.UniversalRuntimeException;
 

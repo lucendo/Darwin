@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.darwin.parse;
 
+import uk.org.ponder.darwin.item.PageInfo;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**

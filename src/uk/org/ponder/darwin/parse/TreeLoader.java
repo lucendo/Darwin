@@ -6,6 +6,9 @@ package uk.org.ponder.darwin.parse;
 import java.io.File;
 import java.io.FileInputStream;
 
+import uk.org.ponder.darwin.item.ItemCollection;
+import uk.org.ponder.darwin.item.ItemDetails;
+import uk.org.ponder.darwin.item.PageInfo;
 import uk.org.ponder.fileutil.FileUtil;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
@@ -31,7 +34,7 @@ public class TreeLoader {
         File f = new File(filename);
         try {
           FileInputStream fis = new FileInputStream(f);
-          ContentParse parse = new ContentParse();
+          ContentParser parse = new ContentParser();
           StringList thiserrors = parse.parse(fis, filename, apr);
           for (int er = 0; er < thiserrors.size(); ++ er) {
             String thiser = "Error parsing file " + filename + thiserrors.stringAt(er);

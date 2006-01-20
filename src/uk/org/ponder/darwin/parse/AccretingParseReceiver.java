@@ -3,9 +3,18 @@
  */
 package uk.org.ponder.darwin.parse;
 
+import org.xmlpull.v1.XmlPullParser;
+
+import uk.org.ponder.darwin.item.ContentInfo;
+import uk.org.ponder.darwin.item.ItemCollection;
+import uk.org.ponder.darwin.item.ItemDetails;
+import uk.org.ponder.darwin.item.PageInfo;
+import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
+ * A parser receiver which accepts parsed data and accretes into a global
+ * collection of known items and details.
  * @author Antranig Basman (amb26@ponder.org.uk)
  * 
  */
@@ -37,14 +46,6 @@ public class AccretingParseReceiver implements ParseReceiver {
     
   }
 
-  public void text(char[] buffer, int start, int length) {
-    // TODO Auto-generated method stub    
-  }
-
-  public void text(String text) {
-    // TODO Auto-generated method stub
-    
-  }
 
   public void metObject(Object tagobj) {
     if (tagobj instanceof DocumentTag) {
@@ -85,6 +86,11 @@ public class AccretingParseReceiver implements ParseReceiver {
     details = null;
     currentpage = 0;
     content = null;
+  }
+
+  public void text(XmlPullParser parser, int token, CharWrap text) {
+    // TODO Auto-generated method stub
+    
   }
 
 }

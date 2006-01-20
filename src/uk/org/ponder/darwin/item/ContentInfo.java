@@ -1,7 +1,7 @@
 /*
  * Created on 31-Oct-2005
  */
-package uk.org.ponder.darwin.parse;
+package uk.org.ponder.darwin.item;
 
 /**
  * Information on a single content file. Several of these may be attached to

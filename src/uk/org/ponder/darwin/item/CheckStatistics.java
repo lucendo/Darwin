@@ -1,7 +1,7 @@
 /*
  * Created on 12-Nov-2005
  */
-package uk.org.ponder.darwin.parse;
+package uk.org.ponder.darwin.item;
 
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
@@ -15,7 +15,7 @@ public class CheckStatistics {
   int contents;
   int images;
   int pages;
-  long time;
+  public long time;
   public void report(PrintOutputStream pos) {
     pos.println("\nRead " + pages + " pages, " + images + " images from " + contents + " content files in " + time + "ms");
     int cerrors = errors.size();
