@@ -10,12 +10,13 @@ import uk.org.ponder.darwin.item.ItemCollection;
 import uk.org.ponder.darwin.item.ItemDetails;
 import uk.org.ponder.darwin.item.PageInfo;
 import uk.org.ponder.fileutil.FileUtil;
+import uk.org.ponder.streamutil.StreamCloseUtil;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
 
 /**
  * @author Antranig Basman (amb26@ponder.org.uk)
- *  
+ * 
  */
 public class TreeLoader {
 
@@ -32,12 +33,14 @@ public class TreeLoader {
       if (Extensions.isContentFile(extension)) {
         Logger.log.warn("Parsing content file " + filename);
         File f = new File(filename);
+        FileInputStream fis = null;
         try {
-          FileInputStream fis = new FileInputStream(f);
+          fis = new FileInputStream(f);
           ContentParser parse = new ContentParser();
           StringList thiserrors = parse.parse(fis, filename, apr);
-          for (int er = 0; er < thiserrors.size(); ++ er) {
-            String thiser = "Error parsing file " + filename + thiserrors.stringAt(er);
+          for (int er = 0; er < thiserrors.size(); ++er) {
+            String thiser = "Error parsing file " + filename
+                + thiserrors.stringAt(er);
             thiserrors.set(er, thiser);
           }
           allerrors.addAll(thiserrors);
@@ -46,16 +49,26 @@ public class TreeLoader {
           Logger.log.warn("Error parsing file " + filename + ": "
               + e.getMessage(), e);
         }
+        finally {
+          StreamCloseUtil.closeInputStream(fis);
+        }
       }
       else if (Extensions.isImageFile(extension)) {
-        Logger.log.info("Registering image file " + filename);
-        ImageFilename imagefile = ImageFilename.parse(filename);
-        ItemDetails details = collection.getItemSafe(imagefile.ID);
-        PageInfo pageinfo = details.acquirePageInfoSafe(imagefile.pageseq);
-        pageinfo.imagefile = filename;
+        try {
+          Logger.log.info("Registering image file " + filename);
+          ImageFilename imagefile = ImageFilename.parse(filename);
+          ItemDetails details = collection.getItemSafe(imagefile.ID);
+          PageInfo pageinfo = details.acquirePageInfoSafe(imagefile.pageseq);
+          pageinfo.imagefile = filename;
+        }
+        catch (Exception e) {
+          Logger.log.warn("Skipping unrecognised image filename " + filename
+              + ": " + e);
+        }
       }
       else {
-        Logger.log.warn("Warning: file " + filename +" with unrecognised extension was skipped");
+        Logger.log.warn("Warning: file " + filename
+            + " with unrecognised extension was skipped");
       }
     }
     return allerrors;

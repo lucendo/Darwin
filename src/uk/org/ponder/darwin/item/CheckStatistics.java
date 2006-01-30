@@ -12,12 +12,15 @@ import uk.org.ponder.stringutil.StringList;
  */
 public class CheckStatistics {
   public StringList errors = new StringList();
-  int contents;
-  int images;
-  int pages;
+  public int totalfiles;
+  public int contents;
+  public int images;
+  public int pages;
   public long time;
+  
   public void report(PrintOutputStream pos) {
-    pos.println("\nRead " + pages + " pages, " + images + " images from " + contents + " content files in " + time + "ms");
+    pos.println("\nRead " + pages + " pages, " + images + 
+        " images from " + contents + " content files in " + time + "ms");
     int cerrors = errors.size();
     pos.print(cerrors == 1? "There was 1 error" : "There were " + cerrors + " errors");
     pos.println(cerrors == 0? "" : ":");

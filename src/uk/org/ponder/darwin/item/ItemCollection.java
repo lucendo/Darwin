@@ -5,6 +5,7 @@ package uk.org.ponder.darwin.item;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -12,7 +13,7 @@ import java.util.HashMap;
  * 
  */
 public class ItemCollection {
-  private HashMap items = new HashMap();
+  private Map items = new HashMap();
   
   private HashMap contents = new HashMap();
   public ItemDetails getItemSafe(String ID) {

@@ -20,5 +20,5 @@ public interface ParseReceiver {
   public void metObject(Object tagobj);
   public void beginFile(String contentpath);
   public void endFile();
-  public void protoTag(String tagname, String clazz, HashMap attrmap);
+  public void protoTag(String tagname, String clazz, HashMap attrmap, boolean isempty);
 }

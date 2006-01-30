@@ -13,7 +13,9 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class PageInfo {
   // a reasonable maximum to avoid overflowing memory elsewhere.
   public static final int PAGE_MAX = 10000;
+  /** The page sequence number (pageseq) **/
   public int sequence;
+  /** The textual version of the page number **/
   public String text;
   public String imagefile;
   public String contentfile;

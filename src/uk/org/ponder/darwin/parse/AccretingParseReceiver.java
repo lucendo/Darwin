@@ -53,7 +53,7 @@ public class AccretingParseReceiver implements ParseReceiver {
     
   }
 
-  public void protoTag(String tagname, String clazz, HashMap attrmap) {
+  public void protoTag(String tagname, String clazz, HashMap attrmap, boolean isempty) {
     // TODO Auto-generated method stub
     
   }
@@ -70,19 +70,28 @@ public class AccretingParseReceiver implements ParseReceiver {
       content.filename = contentpath;
       content.firstpage = doc.firstpage;
       content.lastpage = doc.lastpage;
+      currentpage = doc.firstpage - 1;
       details.addContentInfo(content);
       collection.storeContent(content);
     }
     else if (tagobj instanceof PageTag) {
       PageTag page = (PageTag) tagobj;
-      if (currentpage != NO_PAGE && currentpage != page.pageseq - 1) {
-        throw new UniversalRuntimeException("Non-consecutive page numbers - " + page.pageseq + 
-            " follows page " + currentpage);
+      if (content == null) {
+        throw new UniversalRuntimeException("Page tag met in " + contentpath + " without document class first");
       }
-      if (page.pageseq < content.firstpage || page.pageseq > content.lastpage) {
+      // This section commented out to 
+//      if (currentpage != NO_PAGE && currentpage != page.pageseq - 1) {
+//        throw new UniversalRuntimeException("Non-consecutive page numbers - " + page.pageseq + 
+//            " follows page " + currentpage);
+//      }
+      if (page.pageseq == PageTag.NO_PAGE) {
+        page.pageseq = currentpage + 1;
+      }
+      else if (page.pageseq < content.firstpage || page.pageseq > content.lastpage) {
         throw new UniversalRuntimeException("Page " + page.pageseq + " is outside the range "
            + content.firstpage + "-" + content.lastpage + " advertised ");
       }
+     
       currentpage = page.pageseq;
       PageInfo pageinfo = details.acquirePageInfoSafe(page.pageseq);
       pageinfo.contentfile = contentpath;

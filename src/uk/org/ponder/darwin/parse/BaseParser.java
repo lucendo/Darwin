@@ -71,7 +71,6 @@ public class BaseParser {
     case XmlPullParser.DOCDECL:
       tokenbuffer.append("<!DOCTYPE");
       break;
-  
     }
     tokenbuffer.append(chars, limits[0], limits[1]);
     switch (token) {

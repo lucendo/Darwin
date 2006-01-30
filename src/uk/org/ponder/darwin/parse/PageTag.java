@@ -8,6 +8,7 @@ package uk.org.ponder.darwin.parse;
  * 
  */
 public class PageTag {
-  public int pageseq;
+  public static final int NO_PAGE = -1;
+  public int pageseq = NO_PAGE;
   public String pagetext;
 }

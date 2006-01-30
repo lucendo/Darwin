@@ -26,10 +26,14 @@ public class ItemChecks {
         }
         else {
           ++togo.pages;
+          if (page.contentfile == null && page.imagefile == null) {
+            togo.errors.add("Couldn't find either image or content data for " + location);
+          }
           if (page.contentfile == null) {
-            togo.errors.add("Could not find content file for " + location);
+            //togo.errors.add("Could not find content file for " + location);
           }
           else {
+            details.hastext = true;
             ContentInfo info = collection.getContentInfo(page.contentfile);
             if (i < info.firstpage || i > info.lastpage) {
               togo.errors.add("Content file " + page.contentfile
@@ -37,9 +41,10 @@ public class ItemChecks {
             }
           }
           if (page.imagefile == null) {
-            togo.errors.add("Could not find image for " + location);
+            //togo.errors.add("Could not find image for " + location);
           }
           else {
+            details.hasimage = true;
             ++togo.images;
           }
         }

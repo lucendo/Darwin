@@ -4,10 +4,7 @@
 package uk.org.ponder.darwin.parse;
 
 import uk.org.ponder.darwin.item.CheckStatistics;
-import uk.org.ponder.darwin.item.ItemChecks;
-import uk.org.ponder.darwin.item.ItemCollection;
 import uk.org.ponder.streamutil.write.PrintStreamPOS;
-import uk.org.ponder.stringutil.StringList;
 
 /**
  * @author Antranig Basman (amb26@ponder.org.uk)
@@ -19,13 +16,11 @@ public class CheckTree {
       System.out.println("Usage: CheckTree <directory name>");
       System.exit(-1);
     }
-    long time = System.currentTimeMillis();
-    ItemCollection collection = new ItemCollection();
-    StringList parseerrors = TreeLoader.scanTree(args[0], collection);
-    CheckStatistics stats = new CheckStatistics();
-    stats.time = System.currentTimeMillis() - time;
-    stats.errors = parseerrors;
-    ItemChecks.checkCollection(collection, stats);
+    ItemCollectionManager manager = new ItemCollectionManager();
+    manager.setContentRoot(args[0]);
+    manager.index();
+   
+    CheckStatistics stats = manager.statistics;
     
     PrintStreamPOS pos = new PrintStreamPOS(System.out);
     stats.report(pos);

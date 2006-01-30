@@ -16,6 +16,10 @@ import uk.org.ponder.arrayutil.ListUtil;
  */
 public class ItemDetails {
   public String ID;
+  /** Set to <code>true</code> if thie book supplies ANY page images **/
+  public boolean hasimage;
+  /** Set to <code>true</code> if thie book supplies ANY textual content **/
+  public boolean hastext;
   /** This is a list of PageInfo */
   public List pages = new ArrayList();
   public void addPageInfo(PageInfo pageinfo) {

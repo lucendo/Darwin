@@ -10,7 +10,7 @@ import java.util.HashMap;
 import org.apache.log4j.Level;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
-//http://www.extreme.indiana.edu/viewcvs/XPP3/java/src/java/mxp1_min/org/xmlpull/mxp1/MXParser.java?rev=1.48&content-type=text/vnd.viewcvs-markup
+// http://www.extreme.indiana.edu/viewcvs/XPP3/java/src/java/mxp1_min/org/xmlpull/mxp1/MXParser.java?rev=1.48&content-type=text/vnd.viewcvs-markup
 
 import uk.org.ponder.darwin.item.PageInfo;
 import uk.org.ponder.stringutil.CharWrap;
@@ -24,7 +24,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * markers, of the form #BeginEditable &c.
  * 
  * @author Antranig Basman (amb26@ponder.org.uk)
- *  
+ * 
  */
 public class ContentParser extends BaseParser {
   Object pendingbody = null;
@@ -51,7 +51,7 @@ public class ContentParser extends BaseParser {
    * Investigates an open tag for one of the special dar: attributes, either a
    * document, page or section.
    */
-  private void checkOpenTag() {
+  private void checkOpenTag(boolean isempty) {
     String tagname = parser.getName();
     HashMap attrmap = new HashMap();
     int attrs = parser.getAttributeCount();
@@ -61,7 +61,7 @@ public class ContentParser extends BaseParser {
       attrmap.put(attrname, attrvalue);
     }
     String clazz = (String) attrmap.get(Attributes.CLASS_ATTR);
-    receiver.protoTag(tagname, clazz, attrmap);
+    receiver.protoTag(tagname, clazz, attrmap, isempty);
     if (Attributes.DOCUMENT_CLASS.equals(clazz)) {
       String ID = getAttrExpected(attrmap, Attributes.ID_ATTR);
       String seqrange = getAttrExpected(attrmap, Attributes.SEQPAGERANGE_ATTR);
@@ -72,10 +72,13 @@ public class ContentParser extends BaseParser {
     }
     else if (Attributes.PAGE_CLASS.equals(clazz)) {
       PageTag pendingpage = new PageTag();
-      String pageseq = getAttrExpected(attrmap, Attributes.PAGESEQ_ATTR);
-      pendingpage.pageseq = PageInfo.parsePageSeq(pageseq);
+      String pageseq = (String) attrmap.get(Attributes.PAGESEQ_ATTR);
+      // getAttrExpected(attrmap, Attributes.PAGESEQ_ATTR);
+      if (pageseq != null) {
+        pendingpage.pageseq = PageInfo.parsePageSeq(pageseq);
+      }
       pendingbody = pendingpage;
-    
+
       // wait until close tag to emit pending page.
     }
   }
@@ -90,7 +93,7 @@ public class ContentParser extends BaseParser {
 
     parser = new MXParser();
     try {
-      //parser.setFeature(FEATURE_XML_ROUNDTRIP, true);
+      // parser.setFeature(FEATURE_XML_ROUNDTRIP, true);
       parser.setInput(xmlstream, null);
       while (true) {
         try {
@@ -99,14 +102,18 @@ public class ContentParser extends BaseParser {
             break;
           CharWrap tokenchars = renderToken(token);
           receiver.text(parser, token, tokenchars);
-          if (this.currenteditableclass != null) {
-            if (token == XmlPullParser.START_TAG) {
-              checkOpenTag();
-            }
-            if (pendingbody != null) {
-              pendingBody(token);
+          // if (this.currenteditableclass != null) {
+          if (token == XmlPullParser.START_TAG) {
+            boolean isempty = parser.isEmptyElementTag();
+            checkOpenTag(isempty);
+            if (isempty) {
+              parser.next();
             }
           }
+          if (pendingbody != null) {
+            pendingBody(token);
+          }
+          // }
           if (token == XmlPullParser.COMMENT) {
             String oldclass = currenteditableclass;
             boolean ischange = testComment();
@@ -137,26 +144,26 @@ public class ContentParser extends BaseParser {
         receiver.endFile();
       }
       catch (Exception e) {
-        Logger.log.log(Level.INFO, e);
+        Logger.log.log(Level.WARN, e);
         signalError(e.getMessage());
       }
     }
-//    System.out.println("in " +(System.currentTimeMillis() - time) + "ms");
+    // System.out.println("in " +(System.currentTimeMillis() - time) + "ms");
     return errors;
   }
 
   private void pendingBody(int token) {
-   if (token == XmlPullParser.TEXT) {
-     char[] chars = parser.getTextCharacters(limits);
-     pendingbodytext.append(chars, limits[0], limits[1]);
-   }
-   else if (token == XmlPullParser.END_TAG) {
-     PageTag togo = (PageTag) pendingbody;
-     togo.pagetext = pendingbodytext.toString();
-     pendingbodytext.clear();
-     pendingbody = null;
-     receiver.metObject(togo);
-   }
+    if (token == XmlPullParser.TEXT) {
+      char[] chars = parser.getTextCharacters(limits);
+      pendingbodytext.append(chars, limits[0], limits[1]);
+    }
+    else if (token == XmlPullParser.END_TAG) {
+      PageTag togo = (PageTag) pendingbody;
+      togo.pagetext = pendingbodytext.toString();
+      pendingbodytext.clear();
+      pendingbody = null;
+      receiver.metObject(togo);
+    }
   }
 
 }
