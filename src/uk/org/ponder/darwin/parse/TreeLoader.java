@@ -21,6 +21,7 @@ import uk.org.ponder.util.Logger;
 public class TreeLoader {
 
   public static StringList scanTree(String root, ItemCollection collection) {
+    Logger.log.warn("Beginning scan in directory " + root);
     File rootdir = new File(root);
     StringList files = FileUtil.getListing(rootdir, FileUtil.FILE_MASK);
     Logger.log.info("Scanning " + files.size() + " files in directory "
@@ -57,6 +58,9 @@ public class TreeLoader {
         try {
           Logger.log.info("Registering image file " + filename);
           ImageFilename imagefile = ImageFilename.parse(filename);
+          if (imagefile == null) { // it is a "figure" part of a book
+            continue;
+          }
           ItemDetails details = collection.getItemSafe(imagefile.ID);
           PageInfo pageinfo = details.acquirePageInfoSafe(imagefile.pageseq);
           pageinfo.imagefile = filename;

@@ -22,8 +22,9 @@ public class ImageFilename {
       int lastunderpos = filename.lastIndexOf('_', lastdotpos - 1);
       int nextunderpos = filename.lastIndexOf('_', lastunderpos - 1);
       togo.stump = filename.substring(0, nextunderpos);
-      String pageseqs = filename.substring(lastunderpos + 1, lastdotpos);
-      togo.pageseq = PageInfo.parsePageSeq(pageseqs);
+      String pageseq = filename.substring(lastunderpos + 1, lastdotpos);
+      if (pageseq.startsWith("fig")) return null;
+      togo.pageseq = PageInfo.parsePageSeq(pageseq);
       togo.ID = filename.substring(nextunderpos + 1, lastunderpos);
       return togo;
     }
