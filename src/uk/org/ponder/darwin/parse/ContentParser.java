@@ -94,7 +94,7 @@ public class ContentParser extends BaseParser {
     parser = new MXParser();
     try {
       // parser.setFeature(FEATURE_XML_ROUNDTRIP, true);
-      parser.setInput(xmlstream, null);
+      parser.setInput(xmlstream, "UTF-8");
       while (true) {
         try {
           int token = parser.nextToken();

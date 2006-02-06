@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.darwin.item;
 
+import java.util.Date;
+
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
 
@@ -17,6 +19,7 @@ public class CheckStatistics {
   public int images;
   public int pages;
   public long time;
+  public Date scandate;
   
   public void report(PrintOutputStream pos) {
     pos.println("\nRead " + pages + " pages, " + images + 

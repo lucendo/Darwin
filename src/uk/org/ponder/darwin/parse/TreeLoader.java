@@ -30,6 +30,9 @@ public class TreeLoader {
     AccretingParseReceiver apr = new AccretingParseReceiver(collection);
     for (int i = 0; i < files.size(); ++i) {
       String filename = files.stringAt(i);
+      Logger.log.warn("Examining filename " + filename);
+      filename = FileUtil.getCanonicalPath(filename);
+      Logger.log.warn("Canonical filaname " + filename);
       String extension = Extensions.getExtension(filename);
       if (Extensions.isContentFile(extension)) {
         Logger.log.warn("Parsing content file " + filename);

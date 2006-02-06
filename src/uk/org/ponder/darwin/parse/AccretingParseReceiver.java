@@ -67,6 +67,7 @@ public class AccretingParseReceiver implements ParseReceiver {
        }
       details = collection.getItemSafe(doc.ID);
       content = new ContentInfo();
+      content.itemID = details.ID;
       content.filename = contentpath;
       content.firstpage = doc.firstpage;
       content.lastpage = doc.lastpage;

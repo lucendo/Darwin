@@ -14,6 +14,6 @@ public class Attributes {
   public static String ID_ATTR = "dar:id";
   
   public static String DOCUMENT_CLASS = "document";
-  public static String PAGE_CLASS = "pageno";
+  public static String PAGE_CLASS = "page";
   public static String SECTION_CLASS = "section";
 }

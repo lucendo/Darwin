@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.darwin.parse;
 
+import java.util.Date;
+
 import uk.org.ponder.darwin.item.CheckStatistics;
 import uk.org.ponder.darwin.item.ItemChecks;
 import uk.org.ponder.darwin.item.ItemCollection;
@@ -35,6 +37,7 @@ public class ItemCollectionManager {
     collection = newcollection;
     statistics = new CheckStatistics();
     statistics.time = System.currentTimeMillis() - time;
+    statistics.scandate = new Date();
     statistics.errors = parseerrors;
     ItemChecks.checkCollection(newcollection, statistics);
     StringPOS pos = new StringPOS();

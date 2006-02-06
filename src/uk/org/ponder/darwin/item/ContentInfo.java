@@ -10,7 +10,8 @@ package uk.org.ponder.darwin.item;
  * 
  */
 public class ContentInfo {
-  /** A relative file path holding the content file **/
+  public String itemID;
+  /** An absolute file path holding the content file **/
   public String filename;
   public int firstpage;
   public int lastpage;
