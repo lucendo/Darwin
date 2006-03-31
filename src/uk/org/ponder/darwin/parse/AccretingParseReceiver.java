@@ -39,23 +39,18 @@ public class AccretingParseReceiver implements ParseReceiver {
   }
   
   public void beginEditable(String editclass) {
-    // TODO Auto-generated method stub
-    
   }
 
   public void endEditable(String editclass) {
-    // TODO Auto-generated method stub
-    
   }
 
   public void text(XmlPullParser parser, int token, CharWrap text) {
-    // TODO Auto-generated method stub
-    
   }
 
   public void protoTag(String tagname, String clazz, HashMap attrmap, boolean isempty) {
-    // TODO Auto-generated method stub
-    
+  }
+  
+  public void endTag(String tagname) {
   }
   
   public void metObject(Object tagobj) {
@@ -108,5 +103,6 @@ public class AccretingParseReceiver implements ParseReceiver {
     currentpage = 0;
     content = null;
   }
+
 
 }

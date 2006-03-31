@@ -16,33 +16,41 @@ public class ItemCollectionManager {
   private ItemCollection collection;
   public StringList errors;
   public CheckStatistics statistics;
-  
+
   public boolean busy;
   private String contentroot;
-  
+
   public void setContentRoot(String contentroot) {
     this.contentroot = contentroot;
   }
-  
+
   public ItemCollection getItemCollection() {
     return collection;
   }
-  
+
   public void index() {
     busy = true;
     long time = System.currentTimeMillis();
     ItemCollection newcollection = new ItemCollection();
-    StringList parseerrors = TreeLoader.scanTree(contentroot, newcollection);
-    
-    collection = newcollection;
-    statistics = new CheckStatistics();
-    statistics.time = System.currentTimeMillis() - time;
-    statistics.scandate = new Date();
-    statistics.errors = parseerrors;
-    ItemChecks.checkCollection(newcollection, statistics);
     StringPOS pos = new StringPOS();
+    try {
+      StringList parseerrors = TreeLoader.scanTree(contentroot, newcollection);
+
+      collection = newcollection;
+      statistics = new CheckStatistics();
+      statistics.time = System.currentTimeMillis() - time;
+      statistics.scandate = new Date();
+      statistics.errors = parseerrors;
+      ItemChecks.checkCollection(newcollection, statistics);
+    }
+    catch (Exception e) {
+      pos.print("Unexpected error scanning files: " + e.getMessage());
+      Logger.log.error(e);
+    }
+
     statistics.report(pos);
     Logger.log.warn(pos.toString());
     busy = false;
+
   }
 }

@@ -26,9 +26,9 @@ public class ItemDetails {
     pages.add(pageinfo);
   }
   /** This is a list of ContentInfo */
-  private List content = new ArrayList();
+  public List contents = new ArrayList();
   public void addContentInfo(ContentInfo contentinfo) {
-    content.add(contentinfo);
+    contents.add(contentinfo);
   }
   /**
    * @param pageseq

@@ -110,6 +110,9 @@ public class ContentParser extends BaseParser {
               parser.next();
             }
           }
+          else if (token == XmlPullParser.END_TAG) {
+            receiver.endTag(parser.getName());
+          }
           if (pendingbody != null) {
             pendingBody(token);
           }

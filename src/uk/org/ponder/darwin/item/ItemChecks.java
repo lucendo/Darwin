@@ -5,6 +5,8 @@ package uk.org.ponder.darwin.item;
 
 import java.util.Iterator;
 
+import uk.org.ponder.util.Logger;
+
 
 /**
  * @author Antranig Basman (amb26@ponder.org.uk)
@@ -17,10 +19,16 @@ public class ItemChecks {
       ItemDetails details = (ItemDetails) itemit.next();
 
       for (int i = 1; i < details.pages.size(); ++i) {
+        String location = "Page with sequence " + i + " of item with ID " + details.ID;
         PageInfo page = (PageInfo) details.pages.get(i);
+        try {
+        if (page == null) {
+          togo.errors.add(location + " is missing all data");
+          continue;
+        }
         String pagetext = page.text == null? "(unknown)" : page.text;
-        String location = "page " + pagetext + " with sequence " + i + " of item with ID "
-            + details.ID;
+        location = "page " + pagetext + " with sequence " + i + " of item with ID "
+        + details.ID;
         if (page == null) {
           togo.errors.add("No information for " + location);
         }
@@ -47,6 +55,11 @@ public class ItemChecks {
             details.hasimage = true;
             ++togo.images;
           }
+        }
+        }
+        catch (Exception e) {
+          togo.errors.add("Unexpected error " + e + " scanning " + location);
+          Logger.log.error(e);
         }
       }
     }

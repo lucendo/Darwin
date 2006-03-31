@@ -69,6 +69,7 @@ public class TreeLoader {
           pageinfo.imagefile = filename;
         }
         catch (Exception e) {
+          allerrors.add("Skipping unrecognised image filename " + filename);
           Logger.log.warn("Skipping unrecognised image filename " + filename
               + ": " + e);
         }
