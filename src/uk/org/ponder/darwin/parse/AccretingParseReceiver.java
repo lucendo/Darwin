@@ -21,12 +21,11 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * 
  */
 public class AccretingParseReceiver implements ParseReceiver {
-  private static final int NO_PAGE = -1;
   public AccretingParseReceiver(ItemCollection collection) {
     this.collection = collection;
   }
   
-  int currentpage = NO_PAGE;
+  int currentpage = PageTag.NO_PAGE;
   
   private ItemCollection collection;
   private ItemDetails details;
@@ -91,7 +90,7 @@ public class AccretingParseReceiver implements ParseReceiver {
       currentpage = page.pageseq;
       PageInfo pageinfo = details.acquirePageInfoSafe(page.pageseq);
       pageinfo.contentfile = contentpath;
-      pageinfo.text = page.pagetext;
+      pageinfo.text = page.pagenotext;
     }
   }
 

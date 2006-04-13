@@ -162,7 +162,7 @@ public class ContentParser extends BaseParser {
     }
     else if (token == XmlPullParser.END_TAG) {
       PageTag togo = (PageTag) pendingbody;
-      togo.pagetext = pendingbodytext.toString();
+      togo.pagenotext = pendingbodytext.toString();
       pendingbodytext.clear();
       pendingbody = null;
       receiver.metObject(togo);

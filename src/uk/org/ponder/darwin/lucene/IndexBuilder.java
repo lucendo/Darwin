@@ -3,12 +3,9 @@
  */
 package uk.org.ponder.darwin.lucene;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,20 +25,21 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.store.FSDirectory;
 
 import uk.org.ponder.darwin.item.ContentInfo;
-import uk.org.ponder.darwin.parse.FlatteningReader;
+import uk.org.ponder.darwin.parse.PageTag;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class IndexBuilder {
-  
+
   private String indexdir;
   private Analyzer analyzer;
   private IndexModifier indexmodifier;
   private IndexSearcher indexsearcher;
   private boolean forcereindex = false;
-  
+
   public long indexedbytes;
 
   public void setIndexDirectory(String indexdir) {
@@ -55,14 +53,32 @@ public class IndexBuilder {
   public void setForceReindex(boolean forcereindex) {
     this.forcereindex = forcereindex;
   }
-  
+
+  public void openWriter() {
+    File f = new File(indexdir);
+    if (!f.exists()) {
+      f.mkdirs();
+    }
+    try {
+      indexmodifier = new IndexModifier(f, analyzer, !IndexReader
+          .indexExists(f));
+    }
+    catch (Exception e) {
+      try {
+        IndexReader.unlock(FSDirectory.getDirectory(f, false));
+        indexmodifier = new IndexModifier(f, analyzer, !IndexReader
+            .indexExists(f));
+      }
+      catch (Exception e2) {
+        throw UniversalRuntimeException.accumulate(e2,
+            "2nd-time exception trying to build index in " + f);
+      }
+    }
+  }
+
   public void open() {
     try {
-      File f = new File(indexdir);
-      if (!f.exists()) {
-        f.mkdirs();
-      }
-      indexmodifier = new IndexModifier(f, analyzer, !IndexReader.indexExists(f));
+      openWriter();
       indexsearcher = new IndexSearcher(indexdir);
       indexedbytes = 0;
     }
@@ -90,15 +106,20 @@ public class IndexBuilder {
   public DocHit[] getHit(String ID, int pageseq) {
     BooleanQuery query = new BooleanQuery();
     query.add(new TermQuery(new Term(DocFields.ITEMID, ID)), Occur.MUST);
-    query.add(new TermQuery(new Term(DocFields.PAGESEQ_START, Integer.toString(pageseq))),
-        Occur.MUST);
+    query.add(new TermQuery(new Term(DocFields.PAGESEQ_START, Integer
+        .toString(pageseq))), Occur.MUST);
     try {
+      DocHit[] togo = null;
+      long time = System.currentTimeMillis();
+      for (int i = 0; i < 1; ++ i) {
       Hits hits = indexsearcher.search(query);
-      DocHit[] togo = new DocHit[hits.length()];
+      togo = new DocHit[hits.length()];
       int index = 0;
       for (Iterator hitit = hits.iterator(); hitit.hasNext();) {
-        togo[index++] = new DocHit((Hit)hitit.next());
+        togo[index++] = new DocHit((Hit) hitit.next());
       }
+      }
+      System.out.println("1 searches for " + togo.length + " in " + (System.currentTimeMillis() - time) + "ms");
       return togo;
     }
     catch (IOException e) {
@@ -107,46 +128,37 @@ public class IndexBuilder {
     }
   }
 
-  public static final Reader agglomeratedReader(String path) {
-    try {
-      FileInputStream fis = new FileInputStream(path);
-      Reader r = new InputStreamReader(fis, "UTF-8");
-      return new BufferedReader(new FlatteningReader(r));
-    }
-    catch (Exception e) {
-      throw UniversalRuntimeException.accumulate(e,
-          "Error opening file at path " + path);
+  private List updatecontents = new ArrayList();
+  private List updatepages = new ArrayList();
+
+  public void beginUpdates() {
+  }
+
+  public void checkPage(ContentInfo contentinfo, PageTag pagetag) {
+    File f = new File(contentinfo.filename);
+    if (!upToDate(f, contentinfo.itemID, contentinfo.firstpage)) {
+      updatecontents.add(contentinfo);
+      updatepages.add(pagetag);
     }
   }
 
-  private List updatelist = new ArrayList();
-  
-  public void beginUpdates() {
-  }
-  
-  public void checkPage(ContentInfo contentinfo) {
-    File f = new File(contentinfo.filename);
-    if (!upToDate(f, contentinfo.itemID, contentinfo.firstpage)) {
-      updatelist.add(contentinfo);
-    }
-  }
-  
-  
-  public void addPage(ContentInfo contentinfo) {
+  public void addPage(ContentInfo contentinfo, PageTag pagetag) {
     File f = new File(contentinfo.filename);
     Document doc = new Document();
     doc.add(new Field(DocFields.FILEDATE, Long.toString(f.lastModified()),
         Store.YES, Index.NO));
-    doc.add(new Field(DocFields.ITEMID, contentinfo.itemID, Store.YES, Index.UN_TOKENIZED));
-    doc.add(new Field(DocFields.PAGESEQ_START, Integer.toString(contentinfo.firstpage),
-        Store.YES, Index.UN_TOKENIZED));
-    doc.add(new Field(DocFields.PAGESEQ_END, Integer.toString(contentinfo.lastpage),
-        Store.YES, Index.UN_TOKENIZED));
+    doc.add(new Field(DocFields.ITEMID, contentinfo.itemID, Store.YES,
+        Index.UN_TOKENIZED));
+    doc.add(new Field(DocFields.PAGESEQ_START, Integer
+        .toString(contentinfo.firstpage), Store.YES, Index.UN_TOKENIZED));
+    doc.add(new Field(DocFields.PAGESEQ_END, Integer
+        .toString(contentinfo.lastpage), Store.YES, Index.UN_TOKENIZED));
     long size = f.length();
- 
-    doc.add(new Field("text", agglomeratedReader(contentinfo.filename),
+
+    doc.add(new Field(DocFields.TEXT, new StringReader(pagetag.pagetext),
         TermVector.WITH_POSITIONS_OFFSETS));
-    
+    doc.add(new Field(DocFields.FLAT_TEXT, pagetag.pagetext, Store.YES, Index.NO));
+
     try {
       indexmodifier.addDocument(doc);
       indexedbytes += size;
@@ -155,18 +167,19 @@ public class IndexBuilder {
       throw UniversalRuntimeException.accumulate(e, "Error adding document");
     }
   }
+
   public void endUpdates() {
     try {
-      for (int i = 0; i < updatelist.size(); ++ i) {
-        ContentInfo todel = (ContentInfo) updatelist.get(i);
+      for (int i = 0; i < updatecontents.size(); ++i) {
+        ContentInfo todel = (ContentInfo) updatecontents.get(i);
         DocHit[] olds = getHit(todel.itemID, todel.firstpage);
-        for (int j = 0; j < olds.length; ++ j) {
+        for (int j = 0; j < olds.length; ++j) {
           indexmodifier.deleteDocument(olds[j].docid);
         }
       }
-      for (int i = 0; i < updatelist.size(); ++ i) {
-        ContentInfo todel = (ContentInfo) updatelist.get(i);
-        addPage(todel);
+      for (int i = 0; i < updatecontents.size(); ++i) {
+        ContentInfo todel = (ContentInfo) updatecontents.get(i);
+        addPage(todel, (PageTag) updatepages.get(i));
       }
       indexmodifier.flush();
     }
@@ -174,16 +187,17 @@ public class IndexBuilder {
       throw UniversalRuntimeException.accumulate(e, "Error updating index");
     }
     finally {
-      updatelist.clear();
+      updatecontents.clear();
     }
   }
-  
+
   public IndexSearcher getSearcher() {
     return indexsearcher;
   }
 
   public boolean upToDate(File file, String ID, int pageseq) {
-    if (forcereindex) return false;
+    if (forcereindex)
+      return false;
     long modtime = file.lastModified();
 
     DocHit[] olds = getHit(ID, pageseq);

@@ -31,6 +31,10 @@ public class DarwinAnalyzer extends Analyzer {
     return c == '\'' || Character.isLetter(c) || Character.isDigit(c);
   }
   
+  public static boolean isCoreWordChar(char c) {
+    return Character.isLetter(c) || Character.isDigit(c);
+  }
+  
   public TokenStream tokenStream(String fieldName, Reader reader) {
     ris = new ReaderRIS(reader);
     readpos = 0;
@@ -45,9 +49,9 @@ public class DarwinAnalyzer extends Analyzer {
           ++readpos;
           switch (state) {
           case STATE_OUTSIDE:
-            if (isWordChar(c)) {
+            if (isCoreWordChar(c)) {
               build.append(Character.toLowerCase(c));
-              start = readpos;
+              start = readpos - 1;
               state = STATE_WORD;
             }
             break;
@@ -57,11 +61,14 @@ public class DarwinAnalyzer extends Analyzer {
               break tokenout;
             }
             else {
-              build.append(Character.toLowerCase(c));
+              // normalise by apostrophe removal
+              if (c != '\'') {
+                build.append(Character.toLowerCase(c));
+              }
             }
           }
         }
-        return build.size == 0? null : new Token(build.toString(), start, readpos);
+        return build.size == 0? null : new Token(build.toString(), start, readpos - 1);
       }
       
     };

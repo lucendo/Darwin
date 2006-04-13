@@ -10,4 +10,5 @@ public class DocFields {
   public static final String PAGESEQ_END = "pageseq-end";
   
   public static final String TEXT = "text";
+  public static final String FLAT_TEXT = "flat-text";
 }

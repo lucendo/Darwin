@@ -10,6 +10,7 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import uk.org.ponder.stringutil.CharReceiver;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -29,7 +30,7 @@ public class FlatteningReader extends Reader {
 
   CharWrap readbuffer = new CharWrap();
   boolean inbody = false;
-  boolean prevspace = true;
+  private FlatteningProcessor processor = new FlatteningProcessor();
 
   // The data being accumulated for the benefit of the current read.
   char[] immbuffer;
@@ -43,7 +44,8 @@ public class FlatteningReader extends Reader {
   protected XmlPullParser parser;
 
   public int read(char[] cbuf, int off, int len) {
-    if (EOF) return -1;
+    if (EOF)
+      return -1;
     immbuffer = cbuf;
     immoff = off;
     immlen = len;
@@ -52,7 +54,8 @@ public class FlatteningReader extends Reader {
     if (readbuffer.size > 0) {
       limits[0] = readbuffer.offset;
       limits[1] = readbuffer.size;
-      int consumed = acceptChars(readbuffer.storage);
+      int consumed = processor.acceptChars(readbuffer.storage, limits[0],
+          limits[1]);
       readbuffer.offset += consumed;
       readbuffer.size -= consumed;
       if (readbuffer.size == 0)
@@ -65,39 +68,7 @@ public class FlatteningReader extends Reader {
     return immpos - immoff;
   }
 
-  private int acceptChars(char[] chars) {
-    int length = limits[1];
-    int start = limits[0];
-    int i = 0;
-    for (; i < length; ++i) {
-      char c = chars[start + i];
-      if (Character.isWhitespace(c)) {
-        prevspace = true;
-      }
-      else {
-        if (prevspace) {
-          prevspace = false;
-          if (outChar(' ')) {
-            break;
-          }
-          
-        }
-        if (outChar(c)) {
-          ++i;
-          break;
-        }
-      }
-    }
-    return i;
-  }
-
-  // returns true if buffer filled.
-  private boolean outChar(char c) {
-    immbuffer[immpos] = c;
-    immpos++;
-    return immpos == (immlen + immoff);
-  }
-
+  // accumulate "extra" read characters in order to satisfy a future read.
   private boolean bufferExcess(char[] chars, int written) {
     int length = limits[1];
     int start = limits[0];
@@ -133,9 +104,10 @@ public class FlatteningReader extends Reader {
         }
         else if (token == XmlPullParser.TEXT && inbody) {
           char[] chars = parser.getTextCharacters(limits);
-          int written = acceptChars(chars);
+          int written = processor.acceptChars(chars, limits[0], limits[1]);
           bufferExcess(chars, written);
-          if (immpos == immlen) break;
+          if (immpos == immlen)
+            break;
         }
       }
     }
@@ -156,8 +128,17 @@ public class FlatteningReader extends Reader {
       throw UniversalRuntimeException.accumulate(e,
           "Error setting input stream");
     }
+
     inbody = false;
-    prevspace = true;
+    processor.setCharReceiver(new CharReceiver() {
+
+      public boolean receiveChar(char c) {
+        immbuffer[immpos] = c;
+        immpos++;
+        return immpos == (immlen + immoff);
+      }
+    });
+    processor.init();
     EOF = false;
   }
 
