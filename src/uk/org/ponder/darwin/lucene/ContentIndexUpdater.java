@@ -53,7 +53,6 @@ public class ContentIndexUpdater {
   }
 
   public void update() {
-    builder.open();
     long time = System.currentTimeMillis();
     builder.beginUpdates();
     try {

@@ -3,24 +3,19 @@
  */
 package test;
 
-import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
 
-import uk.org.ponder.darwin.item.ContentInfo;
 import uk.org.ponder.darwin.item.ItemCollection;
-import uk.org.ponder.darwin.item.ItemDetails;
 import uk.org.ponder.darwin.item.PageInfo;
 import uk.org.ponder.darwin.lucene.ContentIndexUpdater;
 import uk.org.ponder.darwin.lucene.DarwinAnalyzer;
 import uk.org.ponder.darwin.lucene.DarwinHighlighter;
 import uk.org.ponder.darwin.lucene.DocFields;
 import uk.org.ponder.darwin.lucene.IndexBuilder;
+import uk.org.ponder.darwin.lucene.ItemIndexUpdater;
 import uk.org.ponder.darwin.parse.TreeLoader;
 
 public class TestIndex {
@@ -46,19 +41,36 @@ public class TestIndex {
     testinfo.contentfile = "E:\\flowtalk-jakarta-tomcat-5.5.9\\webapps\\Darwin\\converted\\1835_letters_F1.html";
     testinfo.sequence = 1;
     try {
+      builder.open();
+      ItemIndexUpdater iiu = new ItemIndexUpdater();
+      iiu.setIndexBuilder(builder);
+     
+      iiu.setItemFile("E:\\workspace\\I-DarwinServlet\\src\\webapp\\database\\Item.txt");
+      //iiu.update();
+      QueryParser qp = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
+      Query q = qp.parse("ID:1864 AND type:item");
+      Hits hits = builder.getSearcher().search(q);
+      System.out.println("Got " + hits.length() + " hits for " + q.toString()
+          + ": ");
+      for (int i = 0; i < hits.length(); ++i) {
+        Document doc = hits.doc(i);
+        System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
+            + doc.get(DocFields.PAGESEQ_START));
+      }
+      
       ContentIndexUpdater ciu = new ContentIndexUpdater();
       ciu.setIndexBuilder(builder);
       ciu.setItemCollection(items);
 
       ciu.update();
 
-      QueryParser qp = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
-      Query q = qp.parse("iceberg");
-      Hits hits = builder.getSearcher().search(q);
+      QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
+      Query q2 = qp2.parse("iceberg");
+      Hits hits2 = builder.getSearcher().search(q2);
       DarwinHighlighter highlighter = new DarwinHighlighter();
-      System.out.println("Got " + hits.length() + " hits for " + q.toString()
+      System.out.println("Got " + hits2.length() + " hits for " + q2.toString()
           + ": ");
-      for (int i = 0; i < hits.length(); ++i) {
+      for (int i = 0; i < hits2.length(); ++i) {
         Document doc = hits.doc(i);
         System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
             + doc.get(DocFields.PAGESEQ_START));
