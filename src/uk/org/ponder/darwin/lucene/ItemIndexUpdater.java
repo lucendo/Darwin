@@ -3,32 +3,147 @@
  */
 package uk.org.ponder.darwin.lucene;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
+import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.darwin.item.ItemCollection;
+import uk.org.ponder.darwin.item.ItemDetails;
+import uk.org.ponder.darwin.search.FieldTypeInfo;
+import uk.org.ponder.darwin.search.ItemCSVReader;
+import uk.org.ponder.darwin.search.ItemFieldRegistry;
+import uk.org.ponder.darwin.search.ItemFieldTables;
+import uk.org.ponder.darwin.search.ItemFields;
+import uk.org.ponder.intutil.Algorithms;
+import uk.org.ponder.intutil.intVector;
+import uk.org.ponder.stringutil.FilenameUtil;
+import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
-public class ItemIndexUpdater {
+// currently not Spring-configured since we are imagining indexing use from
+// the command line initially.
+public class ItemIndexUpdater implements DBFieldGetter {
   private IndexBuilder builder;
-  private String itemfile;
+  private String itemdir;
+  private Map subtablemap;
+  private ItemCollection itemcollection;
+  private boolean updateindex;
+
+  public void setItemDirectory(String itemdir) {
+    this.itemdir = itemdir;
+  }
 
   public void setIndexBuilder(IndexBuilder builder) {
     this.builder = builder;
   }
 
-  public void setItemFile(String itemfile) {
-    this.itemfile = itemfile;
+  public void setItemFieldTables(ItemFieldTables fieldtables) {
+    this.subtablemap = fieldtables.getTableMap();
+  }
+
+  public void setItemCollection(ItemCollection itemcollection) {
+    this.itemcollection = itemcollection;
+  }
+
+  public void setUpdateIndex(boolean updateindex) {
+    this.updateindex = updateindex;
+  }
+
+  private Map readyfields;
+
+  public String[] getFields(String itemid) {
+    return (String[]) readyfields.get(itemid);
   }
 
   public void update() {
     long time = System.currentTimeMillis();
-    builder.beginUpdates();
+    readyfields = new HashMap();
+    if (updateindex) {
+      builder.beginUpdates();
+    }
     try {
-      ItemCSVReader reader = new ItemCSVReader(itemfile);
+      ItemCSVReader reader = new ItemCSVReader(itemdir + FilenameUtil.filesep
+          + "Item.txt", true);
+      if (reader.idfield == -1) {
+        throw new IOException("Item identifier field " + ItemFields.IDENTIFIER
+            + " could not be found on first line of file");
+      }
+
+      StringList paramfields = new StringList();
+      intVector fieldtypes = new intVector(20);
+      int[] destiny = Algorithms.fill(reader.fieldnames.length, -1);
+      Map[] lookmaps = new Map[reader.fieldnames.length];
+      for (int i = 0; i < lookmaps.length; ++i) {
+        FieldTypeInfo info = (FieldTypeInfo) ItemFieldRegistry.byDBField
+            .get(reader.fieldnames[i]);
+        if (info != null) {
+          destiny[i] = paramfields.size();
+          paramfields.add(info.paramname == null? info.DBfieldname : info.paramname);
+          fieldtypes.addElement(info.fieldtype);
+
+          if (info.indirectname != null) {
+            lookmaps[i] = (Map) subtablemap.get(info.indirectname);
+          }
+        }
+      }
+
+      String[] paramnames = paramfields.toStringArray();
+      int[] fieldtypearr = fieldtypes.asArray();
+      int iddest = destiny[reader.idfield];
+
+      builder.setMapping(paramnames, iddest, fieldtypearr);
+      builder.setDBFieldGetter(this);
+
+      int HAVE_TEXT_IND = ArrayUtil.indexOf(paramnames, "havetext");
+      int HAVE_IMG_IND = ArrayUtil.indexOf(paramnames, "haveimages");
+      int ITEM_IND = ArrayUtil.indexOf(paramnames, "identifier");
+
       while (true) {
         String[] fields = reader.reader.readNext();
         if (fields == null)
           break;
-        builder.checkItem(reader.fieldnames, fields, reader.idfield);
+        String[] redfields = new String[paramnames.length];
+
+        for (int i = 0; i < lookmaps.length; ++i) {
+          int thisdest = destiny[i];
+          if (thisdest != -1) {
+            String field = fields[i];
+            // this field will be indexed at all
+            if (lookmaps[i] != null) {
+              if (field.trim().length() > 0 && !field.equals("0")) {
+
+                // there is a subtable, look up the resolved value
+                String lookup = (String) lookmaps[i].get(field);
+                if (lookup == null) {
+                  Logger.log.warn("Warning: value " + field + " for "
+                      + reader.fieldnames[i] + " could not be looked up for "
+                      + fields[reader.idfield]);
+                }
+                redfields[thisdest] = lookup;
+              }
+            }
+            else {
+              redfields[thisdest] = field;
+            }
+          }
+        }
+        String id = redfields[ITEM_IND];
+        ItemDetails details = itemcollection.getItem(id);
+
+        redfields[HAVE_TEXT_IND] = (details != null && details.hastext) ? "true"
+            : "false";
+        redfields[HAVE_IMG_IND] = (details != null && details.hasimage) ? "true"
+            : "false";
+
+        readyfields.put(id, redfields);
+
+        if (updateindex) {
+          builder.checkItem(redfields);
+        }
+
       }
     }
     catch (Exception e) {
@@ -43,4 +158,5 @@ public class ItemIndexUpdater {
     System.out.println("Indexed " + size + " bytes in " + delay + " ms: "
         + df.format((size / (delay * 1000.0))) + "Mb/s");
   }
+
 }

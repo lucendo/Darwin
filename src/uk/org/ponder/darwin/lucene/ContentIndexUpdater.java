@@ -37,8 +37,8 @@ public class ContentIndexUpdater {
     pfpr.setPageReceiver(new PageReceiver() {
 
       public void receivePage(PageTag pagetag) {
-        System.out.println("Got page " + pagetag.pageseq + " with "
-            + pagetag.pagetext.length() + " characters");
+//        System.out.println("Got page " + pagetag.pageseq + " with "
+//            + pagetag.pagetext.length() + " characters");
         builder.checkPage(contentinfo, pagetag);
       }
     });

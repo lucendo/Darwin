@@ -6,17 +6,18 @@ package test;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import uk.org.ponder.darwin.item.ItemCollection;
 import uk.org.ponder.darwin.item.PageInfo;
 import uk.org.ponder.darwin.lucene.ContentIndexUpdater;
 import uk.org.ponder.darwin.lucene.DarwinAnalyzer;
 import uk.org.ponder.darwin.lucene.DarwinHighlighter;
-import uk.org.ponder.darwin.lucene.DocFields;
-import uk.org.ponder.darwin.lucene.IndexBuilder;
 import uk.org.ponder.darwin.lucene.ItemIndexUpdater;
-import uk.org.ponder.darwin.parse.TreeLoader;
+import uk.org.ponder.darwin.lucene.QueryBuilder;
+import uk.org.ponder.darwin.search.DocFields;
+import uk.org.ponder.darwin.search.SearchParams;
 
 public class TestIndex {
   // /**
@@ -28,28 +29,26 @@ public class TestIndex {
   // System.getProperty("java.io.tmpdir"));
 
   public static void main(String[] args) {
-    ItemCollection items = new ItemCollection();
-    TreeLoader.scanTree(
-        "E:\\flowtalk-jakarta-tomcat-5.5.9\\webapps\\Darwin\\converted", items);
-
-    IndexBuilder builder = new IndexBuilder();
-    builder.setIndexDirectory("e:\\lucendo\\darwin\\index");
-    builder.setAnalyser(new DarwinAnalyzer());
-    builder.setForceReindex(true);
-
+    
+    ClassPathXmlApplicationContext cpxac = new ClassPathXmlApplicationContext("conf/buildContext.xml");
+    
+    
     PageInfo testinfo = new PageInfo();
     testinfo.contentfile = "E:\\flowtalk-jakarta-tomcat-5.5.9\\webapps\\Darwin\\converted\\1835_letters_F1.html";
     testinfo.sequence = 1;
+    
+    
     try {
-      builder.open();
-      ItemIndexUpdater iiu = new ItemIndexUpdater();
-      iiu.setIndexBuilder(builder);
-     
-      iiu.setItemFile("E:\\workspace\\I-DarwinServlet\\src\\webapp\\database\\Item.txt");
-      //iiu.update();
-      QueryParser qp = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
-      Query q = qp.parse("ID:1864 AND type:item");
-      Hits hits = builder.getSearcher().search(q);
+      ItemIndexUpdater iiu = (ItemIndexUpdater) cpxac.getBean("itemIndexUpdater");
+      QueryBuilder qb = (QueryBuilder) cpxac.getBean("queryBuilder");
+      IndexSearcher searcher = (IndexSearcher) cpxac.getBean("indexSearcher");
+      
+      iiu.update(); // this must happen before we point ContextIndexUpdater at it
+      SearchParams searchparams = new SearchParams();
+      searchparams.identifier = "F1652";
+      
+      Query q = qb.convertQuery(searchparams);
+      Hits hits = searcher.search(q);
       System.out.println("Got " + hits.length() + " hits for " + q.toString()
           + ": ");
       for (int i = 0; i < hits.length(); ++i) {
@@ -58,24 +57,22 @@ public class TestIndex {
             + doc.get(DocFields.PAGESEQ_START));
       }
       
-      ContentIndexUpdater ciu = new ContentIndexUpdater();
-      ciu.setIndexBuilder(builder);
-      ciu.setItemCollection(items);
+      ContentIndexUpdater ciu = (ContentIndexUpdater) cpxac.getBean("contentIndexUpdater");
 
       ciu.update();
 
       QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
       Query q2 = qp2.parse("iceberg");
-      Hits hits2 = builder.getSearcher().search(q2);
-      DarwinHighlighter highlighter = new DarwinHighlighter();
+      Hits hits2 = searcher.search(q2);
+      //DarwinHighlighter highlighter = new DarwinHighlighter();
       System.out.println("Got " + hits2.length() + " hits for " + q2.toString()
           + ": ");
       for (int i = 0; i < hits2.length(); ++i) {
-        Document doc = hits.doc(i);
+        Document doc = hits2.doc(i);
         System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
             + doc.get(DocFields.PAGESEQ_START));
         String pagetext = doc.getField(DocFields.FLAT_TEXT).stringValue();
-        String high = highlighter.getHighlightedHit(q, pagetext, builder.getSearcher().getIndexReader());
+        String high = DarwinHighlighter.getHighlightedHit(q2, pagetext, searcher.getIndexReader());
         System.out.println(high);
       }
     }
@@ -83,7 +80,7 @@ public class TestIndex {
       e.printStackTrace(System.err);
     }
     finally {
-      builder.close();
+      cpxac.close();
     }
 
   }

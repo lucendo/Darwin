@@ -62,24 +62,29 @@ public class ContentParser extends BaseParser {
     }
     String clazz = (String) attrmap.get(Attributes.CLASS_ATTR);
     receiver.protoTag(tagname, clazz, attrmap, isempty);
-    if (Attributes.DOCUMENT_CLASS.equals(clazz)) {
-      String ID = getAttrExpected(attrmap, Attributes.ID_ATTR);
-      String seqrange = getAttrExpected(attrmap, Attributes.SEQPAGERANGE_ATTR);
-      DocumentTag doctag = new DocumentTag();
-      doctag.ID = ID;
-      doctag.applySeqText(seqrange);
-      receiver.metObject(doctag);
-    }
-    else if (Attributes.PAGE_CLASS.equals(clazz)) {
-      PageTag pendingpage = new PageTag();
-      String pageseq = (String) attrmap.get(Attributes.PAGESEQ_ATTR);
-      // getAttrExpected(attrmap, Attributes.PAGESEQ_ATTR);
-      if (pageseq != null) {
-        pendingpage.pageseq = PageInfo.parsePageSeq(pageseq);
+    if (clazz != null) {
+      if (clazz.equals(Attributes.DOCUMENT_CLASS)) {
+        String ID = getAttrExpected(attrmap, Attributes.ID_ATTR);
+        String seqrange = getAttrExpected(attrmap, Attributes.SEQPAGERANGE_ATTR);
+        DocumentTag doctag = new DocumentTag();
+        doctag.ID = ID;
+        doctag.applySeqText(seqrange);
+        receiver.metObject(doctag);
       }
-      pendingbody = pendingpage;
+      else if (clazz.equals(Attributes.PAGE_CLASS)) {
+        PageTag pendingpage = new PageTag();
+        String pageseq = (String) attrmap.get(Attributes.PAGESEQ_ATTR);
+        // getAttrExpected(attrmap, Attributes.PAGESEQ_ATTR);
+        if (pageseq != null) {
+          pendingpage.pageseq = PageInfo.parsePageSeq(pageseq);
+        }
+        pendingbody = pendingpage;
 
-      // wait until close tag to emit pending page.
+        // wait until close tag to emit pending page.
+      }
+      else {
+        Logger.log.warn("Unrecognised dar:class: " + clazz);
+      }
     }
   }
 

@@ -41,7 +41,7 @@ public class PageFlatteningParseReceiver implements ParseReceiver {
   PageTag pendingpage;
 
   public void metObject(Object tagobj) {
-    System.out.println("PFPR got " + tagobj);
+//    System.out.println("PFPR got " + tagobj);
     if (tagobj instanceof DocumentTag) {
       DocumentTag doc = (DocumentTag) tagobj;
       currentpage = doc.firstpage - 1;
