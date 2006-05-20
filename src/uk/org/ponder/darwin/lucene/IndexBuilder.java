@@ -259,9 +259,9 @@ public class IndexBuilder implements IndexForceOpener {
     doc.add(new Field(DocFields.ITEMID, contentinfo.itemID, Store.YES,
         Index.UN_TOKENIZED));
     doc.add(new Field(DocFields.PAGESEQ_START, Integer
-        .toString(contentinfo.firstpage), Store.YES, Index.UN_TOKENIZED));
-    doc.add(new Field(DocFields.PAGESEQ_END, Integer
-        .toString(contentinfo.lastpage), Store.YES, Index.UN_TOKENIZED));
+        .toString(pagetag.pageseq), Store.YES, Index.UN_TOKENIZED));
+//    doc.add(new Field(DocFields.PAGESEQ_END, Integer
+//        .toString(contentinfo.lastpage), Store.YES, Index.UN_TOKENIZED));
 
     doc.add(new Field(DocFields.TEXT, new StringReader(pagetag.pagetext),
         TermVector.WITH_POSITIONS_OFFSETS));
