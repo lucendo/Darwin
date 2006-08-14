@@ -45,11 +45,11 @@ public class ItemCollectionManager {
     }
     catch (Exception e) {
       pos.print("Unexpected error scanning files: " + e.getMessage());
-      Logger.log.error(e);
+      Logger.log.error("Error scanning files", e);
     }
 
-    statistics.report(pos);
     Logger.log.warn(pos.toString());
+    statistics.report(pos);
     busy = false;
 
   }

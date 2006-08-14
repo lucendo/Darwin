@@ -19,13 +19,13 @@
     <dependency>
       <groupId>ponderutilcore</groupId>
       <artifactId>ponderutilcore</artifactId>
-      <version>1.1.2-dev</version>
+      <version>1.1.4-dev</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>j-servletutil</groupId>
       <artifactId>j-servletutil</artifactId>
-      <version>1.1.2-dev</version>
+      <version>1.1.4-dev</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -41,9 +41,9 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>springframework</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
-      <version>1.1.5</version>
+      <version>1.2.8</version>
       <type>jar</type>
     </dependency>
     <dependency>
