@@ -152,7 +152,7 @@ public class ContentParser extends BaseParser {
         receiver.endFile();
       }
       catch (Exception e) {
-        Logger.log.log(Level.WARN, e);
+        Logger.log.log(Level.WARN, "Error parsing file", e);
         signalError(e.getMessage());
       }
     }
