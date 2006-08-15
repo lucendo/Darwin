@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- Application scope beans for search builder -->
+<beans>
+  <bean id="contentRoot" class="java.lang.String">
+    <constructor-arg>
+      <value>/ext/cankerwort/homes/darwin/webapps/ROOT/converted</value>
+    </constructor-arg>
+  </bean>
+
+  <bean id="itemDirectory" class="java.lang.String">
+    <constructor-arg>
+      <value>/ext/cankerwort/homes/darwin/webapps/ROOT/database</value>
+    </constructor-arg>
+  </bean>
+  <bean id="indexDirectory" class="java.lang.String">
+    <constructor-arg>
+      <value>/home/darwin/lucene-index</value>
+    </constructor-arg>
+  </bean>
+  <!--  whether to ignore file date staleness in updating free text index -->
+  <bean id="forceReindex" class="java.lang.Boolean">
+     <constructor-arg value="true"></constructor-arg>
+  </bean>
+
+  <bean id="updateItemIndex" class="java.lang.Boolean">
+     <constructor-arg value="true"></constructor-arg>
+  </bean>
+
+  <bean id="reflectiveCache" class="uk.org.ponder.reflect.JDKReflectiveCache" />
+
+  <bean id="staticLeafParser" class="uk.org.ponder.conversion.StaticLeafParser" />
+
+  <bean id="mappingContext"
+    class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="staticLeafParser" ref="staticLeafParser" />
+  </bean>
+
+
+
+  <bean id="itemCollectionManager"
+    class="uk.org.ponder.darwin.parse.ItemCollectionManager"
+    init-method="index">
+    <property name="contentRoot" ref="contentRoot" />
+  </bean>
+
+  <bean id="itemCollection" factory-bean="itemCollectionManager"
+    factory-method="getItemCollection" />
+
+  <bean id="analyzer" class="uk.org.ponder.darwin.lucene.DarwinAnalyzer"/>
+
+  <bean id="indexBuilder" class="uk.org.ponder.darwin.lucene.IndexBuilder"
+    init-method="open" destroy-method="close">
+    <property name="indexDirectory" ref="indexDirectory" />
+    <property name="analyser" ref="analyzer"/>
+    <property name="forceReindex" ref="forceReindex"/>
+    <property name="indexItemSearcher" ref="indexItemSearcher"/>
+  </bean>
+
+  <bean id="indexItemSearcher"
+    class="uk.org.ponder.darwin.lucene.IndexItemSearcher" init-method="open"
+    destroy-method="close">
+    <property name="indexDirectory" ref="indexDirectory" />
+      <property name="expectForce" value="true"/>
+  </bean>
+
+  <bean id="itemFieldTables"
+    class="uk.org.ponder.darwin.search.ItemFieldTables" init-method="init">
+    <property name="itemDirectory" ref="itemDirectory" />
+  </bean>
+
+  <bean id="itemIndexUpdater"
+    class="uk.org.ponder.darwin.lucene.ItemIndexUpdater">
+    <property name="indexBuilder" ref="indexBuilder" />
+    <property name="itemCollection" ref="itemCollection" />
+    <property name="itemFieldTables" ref="itemFieldTables" />
+    <property name="updateIndex" ref="updateItemIndex" />
+    <property name="itemDirectory" ref="itemDirectory" />
+  </bean>
+
+  <bean id="queryBuilder" class="uk.org.ponder.darwin.lucene.QueryBuilder">
+    <property name="mappingContext" ref="mappingContext" />
+  </bean>
+
+<!--  must be lazy-init since searcher will not be ready until builder is -->
+  <bean id="indexSearcher" lazy-init="true" 
+    factory-bean="indexItemSearcher" factory-method="getIndexSearcher"/>
+
+  <bean id="contentIndexUpdater" class="uk.org.ponder.darwin.lucene.ContentIndexUpdater">
+    <property name="indexBuilder" ref="indexBuilder"/>
+    <property name="itemCollection" ref="itemCollection"/>
+  </bean>
+
+</beans>
