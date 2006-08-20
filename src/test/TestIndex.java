@@ -30,7 +30,7 @@ public class TestIndex {
 
   public static void main(String[] args) {
     
-    ClassPathXmlApplicationContext cpxac = new ClassPathXmlApplicationContext("conf/buildContext.xml");
+    ClassPathXmlApplicationContext cpxac = new ClassPathXmlApplicationContext("conf/" + args[0]);
     
     
     PageInfo testinfo = new PageInfo();
