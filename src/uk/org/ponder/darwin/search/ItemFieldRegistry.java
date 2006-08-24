@@ -25,6 +25,7 @@ public class ItemFieldRegistry {
     new FieldTypeInfo(ItemFields.PUBLISHER_ID, "publisher", FieldTypeInfo.TYPE_FREE_STRING, "Publisher", 1),
     new FieldTypeInfo(ItemFields.PERIODICAL_ID, "periodical", FieldTypeInfo.TYPE_FREE_STRING, "Periodical", 1),
     new FieldTypeInfo(ItemFields.NAME, "name", FieldTypeInfo.TYPE_FREE_STRING),
+    new FieldTypeInfo(ItemFields.NOTES, "notes", FieldTypeInfo.TYPE_FREE_STRING),
     new FieldTypeInfo(ItemFields.DESCRIPTION, "description", FieldTypeInfo.TYPE_FREE_STRING),
     new FieldTypeInfo(ItemFields.HAVE_DIGITAL, "havetext", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.HAVE_FACS, "haveimages", FieldTypeInfo.TYPE_KEYWORD),

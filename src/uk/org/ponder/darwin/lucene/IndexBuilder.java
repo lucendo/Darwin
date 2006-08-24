@@ -227,8 +227,6 @@ public class IndexBuilder implements IndexForceOpener {
                 : Index.UN_TOKENIZED));
       }
     }
-    doc.add(new Field(DocFields.TYPE, DocFields.TYPE_ITEM, Store.YES,
-        Index.UN_TOKENIZED));
   }
 
   public void addItem(String[] fields) {
@@ -236,6 +234,8 @@ public class IndexBuilder implements IndexForceOpener {
 
     try {
       addDBFields(doc, fields);
+      doc.add(new Field(DocFields.TYPE, DocFields.TYPE_ITEM, Store.YES,
+          Index.UN_TOKENIZED));
       indexmodifier.addDocument(doc);
     }
     catch (Exception e) {
