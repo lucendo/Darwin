@@ -30,9 +30,9 @@ public class TreeLoader {
     AccretingParseReceiver apr = new AccretingParseReceiver(collection);
     for (int i = 0; i < files.size(); ++i) {
       String filename = files.stringAt(i);
-      Logger.log.warn("Examining filename " + filename);
-      filename = FileUtil.getCanonicalPath(filename);
-      Logger.log.warn("Canonical filaname " + filename);
+      // Logger.log.warn("Examining filename " + filename);
+      //filename = FileUtil.getCanonicalPath(filename);
+      //Logger.log.warn("Canonical filename " + filename);
       String extension = Extensions.getExtension(filename);
       if (Extensions.isContentFile(extension)) {
         Logger.log.warn("Parsing content file " + filename);
@@ -59,7 +59,7 @@ public class TreeLoader {
       }
       else if (Extensions.isImageFile(extension)) {
         try {
-          Logger.log.info("Registering image file " + filename);
+//          Logger.log.info("Registering image file " + filename);
           ImageFilename imagefile = ImageFilename.parse(filename);
           if (imagefile == null) { // it is a "figure" part of a book
             continue;

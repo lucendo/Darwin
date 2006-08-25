@@ -137,6 +137,9 @@ public class IndexBuilder implements IndexForceOpener {
       updatecontents.add(contentinfo);
       updatepages.add(pagetag);
       ++pending;
+      if ((pending % 1000) == 0) {
+        Logger.log.warn(pending + " pages pending indexing");
+      }
     }
   }
 
@@ -179,15 +182,19 @@ public class IndexBuilder implements IndexForceOpener {
    */
   private void endUpdates(boolean finish) {
     try {
+      int delcontents = 0, delitems = 0;
       for (int i = 0; i < updatecontents.size(); ++i) {
         ContentInfo todel = (ContentInfo) updatecontents.get(i);
+        PageTag delpage = (PageTag) updatepages.get(i);
         DocHit[] olds = indexitemsearcher.getPageHit(todel.itemID,
-            todel.firstpage);
+            delpage.pageseq);
+        delcontents += olds.length;
         deleteDocHits(olds);
       }
       for (int i = 0; i < updateitems.size(); ++i) {
         String[] fields = (String[]) updateitems.get(i);
         DocHit[] olds = indexitemsearcher.getItemHit(fields[idindex]);
+        delitems += olds.length;
         deleteDocHits(olds);
       }
 
@@ -199,8 +206,9 @@ public class IndexBuilder implements IndexForceOpener {
         String[] fields = (String[]) updateitems.get(i);
         addItem(fields);
       }
-      Logger.log.warn(updateitems.size() + " items added: docCount "
+      Logger.log.warn(updatecontents.size() +" pages, " + updateitems.size() + " items added: docCount "
           + this.indexmodifier.docCount());
+      Logger.log.warn(delcontents +" old pages, " + delitems + " old items deleted");
 
       indexmodifier.flush();
       if (finish) {
@@ -280,8 +288,6 @@ public class IndexBuilder implements IndexForceOpener {
 
     long size = pagetag.pagetext.length();
     try {
-      Field fi = doc.getField("identifier");
-      System.out.println("Added page with identifier " + fi.stringValue());
       indexmodifier.addDocument(doc);
       indexedbytes += size;
     }

@@ -8,6 +8,7 @@ import java.util.Date;
 import uk.org.ponder.darwin.item.CheckStatistics;
 import uk.org.ponder.darwin.item.ItemChecks;
 import uk.org.ponder.darwin.item.ItemCollection;
+import uk.org.ponder.darwin.lucene.ItemScanner;
 import uk.org.ponder.streamutil.write.StringPOS;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
@@ -19,6 +20,11 @@ public class ItemCollectionManager {
 
   public boolean busy;
   private String contentroot;
+  private ItemScanner scanner;
+
+  public void setItemScanner(ItemScanner scanner) {
+    this.scanner = scanner;
+  }
 
   public void setContentRoot(String contentroot) {
     this.contentroot = contentroot;
@@ -27,7 +33,7 @@ public class ItemCollectionManager {
   public ItemCollection getItemCollection() {
     return collection;
   }
-
+  
   public void index() {
     busy = true;
     long time = System.currentTimeMillis();
@@ -42,14 +48,18 @@ public class ItemCollectionManager {
       statistics.scandate = new Date();
       statistics.errors = parseerrors;
       ItemChecks.checkCollection(newcollection, statistics);
+      if (scanner != null) {
+        scanner.loadIndexItems(newcollection);
+      }
     }
     catch (Exception e) {
       pos.print("Unexpected error scanning files: " + e.getMessage());
       Logger.log.error("Error scanning files", e);
     }
-
-    Logger.log.warn(pos.toString());
+    
     statistics.report(pos);
+    Logger.log.warn(pos.toString());
+   
     busy = false;
 
   }

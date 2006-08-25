@@ -5,13 +5,13 @@
 <beans>
   <bean id="contentRoot" class="java.lang.String">
     <constructor-arg>
-      <value>E:\workspace\I-DarwinServlet\src\webapp\converted</value>
+      <value>E:\workspace\DarwinServlet\src\webapp\converted</value>
     </constructor-arg>
   </bean>
 
   <bean id="itemDirectory" class="java.lang.String">
     <constructor-arg>
-      <value>E:\workspace\I-DarwinServlet\src\webapp\database</value>
+      <value>E:\workspace\DarwinServlet\src\webapp\database</value>
     </constructor-arg>
   </bean>
   <bean id="indexDirectory" class="java.lang.String">
@@ -32,10 +32,23 @@
 
   <bean id="staticLeafParser" class="uk.org.ponder.conversion.StaticLeafParser" />
 
+
+  <bean id="containerTypeRegistry"
+    class="uk.org.ponder.saxalizer.mapping.ContainerTypeRegistry" />
+
+  <bean id="ELDefaultInferrer"
+    class="uk.org.ponder.saxalizer.mapping.DefaultMapperInferrer"
+    init-method="init">
+    <property name="containerTypeRegistry" ref="containerTypeRegistry" />
+    <property name="depluralize" value="false" />
+  </bean>
+
+
   <bean id="mappingContext"
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="staticLeafParser" ref="staticLeafParser" />
+    <property name="defaultInferrer" ref="ELDefaultInferrer" />
   </bean>
 
 

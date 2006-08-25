@@ -4,6 +4,7 @@
 package uk.org.ponder.darwin.lucene;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import uk.org.ponder.darwin.parse.ContentParser;
 import uk.org.ponder.darwin.parse.PageFlatteningParseReceiver;
 import uk.org.ponder.darwin.parse.PageReceiver;
 import uk.org.ponder.darwin.parse.PageTag;
+import uk.org.ponder.streamutil.StreamCloseUtil;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class ContentIndexUpdater {
@@ -42,13 +44,17 @@ public class ContentIndexUpdater {
         builder.checkPage(contentinfo, pagetag);
       }
     });
+    InputStream is = null;
     try {
-      FileInputStream fis = new FileInputStream(path);
-      parser.parse(fis, path, pfpr);
+      is = new FileInputStream(path);
+      parser.parse(is, path, pfpr);
     }
     catch (Exception e) {
       throw UniversalRuntimeException.accumulate(e,
           "Error opening file at path " + path);
+    }
+    finally {
+      StreamCloseUtil.closeInputStream(is);
     }
   }
 

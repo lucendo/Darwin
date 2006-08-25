@@ -29,24 +29,25 @@ public class TestIndex {
   // System.getProperty("java.io.tmpdir"));
 
   public static void main(String[] args) {
-    
-    ClassPathXmlApplicationContext cpxac = new ClassPathXmlApplicationContext("conf/" + args[0]);
-    
-    
+
+    ClassPathXmlApplicationContext cpxac = new ClassPathXmlApplicationContext(
+        "conf/" + args[0]);
+
     PageInfo testinfo = new PageInfo();
     testinfo.contentfile = "E:\\flowtalk-jakarta-tomcat-5.5.9\\webapps\\Darwin\\converted\\1835_letters_F1.html";
     testinfo.sequence = 1;
-    
-    
+
     try {
-      ItemIndexUpdater iiu = (ItemIndexUpdater) cpxac.getBean("itemIndexUpdater");
+      ItemIndexUpdater iiu = (ItemIndexUpdater) cpxac
+          .getBean("itemIndexUpdater");
       QueryBuilder qb = (QueryBuilder) cpxac.getBean("queryBuilder");
       IndexSearcher searcher = (IndexSearcher) cpxac.getBean("indexSearcher");
-      
-      iiu.update(); // this must happen before we point ContextIndexUpdater at it
+
+      iiu.update(); // this must happen before we point ContextIndexUpdater at
+                    // it
       SearchParams searchparams = new SearchParams();
       searchparams.identifier = "F1652";
-      
+
       Query q = qb.convertQuery(searchparams);
       Hits hits = searcher.search(q);
       System.out.println("Got " + hits.length() + " hits for " + q.toString()
@@ -56,15 +57,16 @@ public class TestIndex {
         System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
             + doc.get(DocFields.PAGESEQ_START));
       }
-      
-      ContentIndexUpdater ciu = (ContentIndexUpdater) cpxac.getBean("contentIndexUpdater");
+
+      ContentIndexUpdater ciu = (ContentIndexUpdater) cpxac
+          .getBean("contentIndexUpdater");
 
       ciu.update();
 
       QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
       Query q2 = qp2.parse("iceberg");
       Hits hits2 = searcher.search(q2);
-      //DarwinHighlighter highlighter = new DarwinHighlighter();
+      // DarwinHighlighter highlighter = new DarwinHighlighter();
       System.out.println("Got " + hits2.length() + " hits for " + q2.toString()
           + ": ");
       for (int i = 0; i < hits2.length(); ++i) {
@@ -72,12 +74,14 @@ public class TestIndex {
         System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
             + doc.get(DocFields.PAGESEQ_START));
         String pagetext = doc.getField(DocFields.FLAT_TEXT).stringValue();
-        String high = DarwinHighlighter.getHighlightedHit(q2, pagetext, searcher.getIndexReader());
+        String high = DarwinHighlighter.getHighlightedHit(q2, pagetext,
+            searcher.getIndexReader());
         System.out.println(high);
       }
     }
-    catch (Exception e) {
+    catch (Throwable e) {
       e.printStackTrace(System.err);
+      e.printStackTrace(System.out);
     }
     finally {
       cpxac.close();

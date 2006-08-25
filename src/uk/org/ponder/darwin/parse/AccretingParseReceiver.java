@@ -59,6 +59,11 @@ public class AccretingParseReceiver implements ParseReceiver {
       if (details != null) {
         throw new UniversalRuntimeException("duplicate tag with attribute " + Attributes.DOCUMENT_CLASS);
        }
+      
+      if (doc.ID.trim().equals("")) {
+        throw new UniversalRuntimeException("Empty ID for document");
+      }
+      
       details = collection.getItemSafe(doc.ID);
       content = new ContentInfo();
       content.itemID = details.ID;
