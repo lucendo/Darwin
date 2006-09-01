@@ -83,6 +83,11 @@
     <property name="itemDirectory" ref="itemDirectory" />
   </bean>
 
+  <bean id="docTypeInterpreter"
+    class="uk.org.ponder.darwin.search.DocTypeInterpreter">
+    <property name="itemFieldTables" ref="itemFieldTables" />
+  </bean>
+
   <bean id="itemIndexUpdater"
     class="uk.org.ponder.darwin.lucene.ItemIndexUpdater">
     <property name="indexBuilder" ref="indexBuilder" />
@@ -90,6 +95,7 @@
     <property name="itemFieldTables" ref="itemFieldTables" />
     <property name="updateIndex" ref="updateItemIndex" />
     <property name="itemDirectory" ref="itemDirectory" />
+    <property name="docTypeInterpreter" ref="docTypeInterpreter"/>
   </bean>
 
   <bean id="queryBuilder" class="uk.org.ponder.darwin.lucene.QueryBuilder">

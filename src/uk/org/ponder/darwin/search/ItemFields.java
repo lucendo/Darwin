@@ -38,4 +38,6 @@ public class ItemFields {
   public static final String HAVE_REPRO_PERM = "Have reproduction permission";
   public static final String COPYRIGHT = "Copyright";
   public static final String DOCUMENT_TYPE = "Document type";
+  
+  public static final String SYNTHESIZED = "Synthesized";
 }

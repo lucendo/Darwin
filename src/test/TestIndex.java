@@ -20,6 +20,38 @@ import uk.org.ponder.darwin.search.DocFields;
 import uk.org.ponder.darwin.search.SearchParams;
 
 public class TestIndex {
+
+  private static void testTextQuery(IndexSearcher searcher, Query q2)
+      throws Exception {
+    Hits hits2 = searcher.search(q2);
+    // DarwinHighlighter highlighter = new DarwinHighlighter();
+    System.out.println("Got " + hits2.length() + " hits for " + q2.toString()
+        + ": ");
+    for (int i = 0; i < hits2.length(); ++i) {
+      Document doc = hits2.doc(i);
+      System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
+          + doc.get(DocFields.PAGESEQ_START));
+      String pagetext = doc.getField(DocFields.FLAT_TEXT).stringValue();
+      String high = DarwinHighlighter.getHighlightedHit(q2, pagetext, searcher
+          .getIndexReader());
+      System.out.println(high);
+    }
+  }
+  
+  private static void testQuery(IndexSearcher searcher, QueryBuilder qb,
+      SearchParams searchparams) throws Exception {
+
+    Query q = qb.convertQuery(searchparams);
+    Hits hits = searcher.search(q);
+    System.out.println("Got " + hits.length() + " hits for " + q.toString()
+        + ": ");
+    for (int i = 0; i < hits.length(); ++i) {
+      Document doc = hits.doc(i);
+      System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
+          + doc.get(DocFields.PAGESEQ_START));
+    }
+  }
+
   // /**
   // * Directory specified by <code>org.apache.lucene.lockDir</code>
   // * or <code>java.io.tmpdir</code> system property
@@ -44,19 +76,17 @@ public class TestIndex {
       IndexSearcher searcher = (IndexSearcher) cpxac.getBean("indexSearcher");
 
       iiu.update(); // this must happen before we point ContextIndexUpdater at
-                    // it
+      // it
       SearchParams searchparams = new SearchParams();
       searchparams.identifier = "F1652";
-
-      Query q = qb.convertQuery(searchparams);
-      Hits hits = searcher.search(q);
-      System.out.println("Got " + hits.length() + " hits for " + q.toString()
-          + ": ");
-      for (int i = 0; i < hits.length(); ++i) {
-        Document doc = hits.doc(i);
-        System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
-            + doc.get(DocFields.PAGESEQ_START));
-      }
+      testQuery(searcher, qb, searchparams );
+      
+      searchparams.identifier = "F*";
+      testQuery(searcher, qb, searchparams );
+      
+      searchparams.identifier = null;
+      searchparams.name = "Darwin";
+      testQuery(searcher, qb, searchparams );
 
       ContentIndexUpdater ciu = (ContentIndexUpdater) cpxac
           .getBean("contentIndexUpdater");
@@ -65,19 +95,7 @@ public class TestIndex {
 
       QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
       Query q2 = qp2.parse("iceberg");
-      Hits hits2 = searcher.search(q2);
-      // DarwinHighlighter highlighter = new DarwinHighlighter();
-      System.out.println("Got " + hits2.length() + " hits for " + q2.toString()
-          + ": ");
-      for (int i = 0; i < hits2.length(); ++i) {
-        Document doc = hits2.doc(i);
-        System.out.println("ID " + doc.get(DocFields.ITEMID) + " pageseq "
-            + doc.get(DocFields.PAGESEQ_START));
-        String pagetext = doc.getField(DocFields.FLAT_TEXT).stringValue();
-        String high = DarwinHighlighter.getHighlightedHit(q2, pagetext,
-            searcher.getIndexReader());
-        System.out.println(high);
-      }
+      testTextQuery(searcher, q2);
     }
     catch (Throwable e) {
       e.printStackTrace(System.err);

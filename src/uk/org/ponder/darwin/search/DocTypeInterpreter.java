@@ -26,6 +26,7 @@ public class DocTypeInterpreter {
   public static final int NOTE = 16;
   public static final int PHOTO = 17;
   public static final int PRINTED = 18;
+  public static final int REVIEW = 19;
   
   private StringSet concises;
   
@@ -39,6 +40,7 @@ public class DocTypeInterpreter {
     for (int i = 1; i <= 8; ++ i) {
       concises.add(doctypes.get(Integer.toString(i)));
     }
+    concises.add(doctypes.get("19"));
   }
   
   public boolean isType(String stringval, int type) {

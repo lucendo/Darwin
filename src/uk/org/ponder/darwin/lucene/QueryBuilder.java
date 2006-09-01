@@ -32,7 +32,7 @@ public class QueryBuilder {
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.mappingcontext = mappingcontext;
   }
-
+  
   public static Sort convertSort(SearchParams params) {
     List fields = new ArrayList();
     if (params.sort.equals(SearchParams.SORT_RELEVANCE)) {
@@ -84,6 +84,9 @@ public class QueryBuilder {
       if (valueo != null && !valueo.equals("")) {
         if (field.equals("sort")) {
           // ignore
+        }
+        else if (field.equals("manuscripts")) {
+          
         }
         else if (!field.equals("freetext")) {
           FieldTypeInfo info = (FieldTypeInfo) ItemFieldRegistry.byParam

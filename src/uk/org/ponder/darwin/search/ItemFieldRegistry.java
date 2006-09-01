@@ -29,11 +29,15 @@ public class ItemFieldRegistry {
     new FieldTypeInfo(ItemFields.DESCRIPTION, "description", FieldTypeInfo.TYPE_FREE_STRING),
     new FieldTypeInfo(ItemFields.HAVE_DIGITAL, "havetext", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.HAVE_FACS, "haveimages", FieldTypeInfo.TYPE_KEYWORD),
+    
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "manuscript", FieldTypeInfo.TYPE_KEYWORD),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "published", FieldTypeInfo.TYPE_KEYWORD),
+    
     new FieldTypeInfo(ItemFields.DATESTRING, null, FieldTypeInfo.TYPE_STRING_NONINDEX),
   };
   
   public static Map byDBField = new HashMap();
-  public static Map byParam = new HashMap();
+  public static Map byParam = new HashMap(); // search parameter name
   public static Map byColumn = new HashMap();
   public static String[] tables;
   

@@ -31,8 +31,9 @@ public class SearchParams {
   public String publisher;
   public String periodical;
   public String description;
+  public String name;
   
-  public Boolean manuscripts;
+  public Boolean manuscript;
   public Boolean published;
   
   public Boolean havetext;

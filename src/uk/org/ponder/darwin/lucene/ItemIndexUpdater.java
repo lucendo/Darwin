@@ -11,6 +11,7 @@ import java.util.Map;
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.darwin.item.ItemCollection;
 import uk.org.ponder.darwin.item.ItemDetails;
+import uk.org.ponder.darwin.search.DocTypeInterpreter;
 import uk.org.ponder.darwin.search.FieldTypeInfo;
 import uk.org.ponder.darwin.search.ItemCSVReader;
 import uk.org.ponder.darwin.search.ItemFieldRegistry;
@@ -31,6 +32,7 @@ public class ItemIndexUpdater implements DBFieldGetter {
   private Map subtablemap;
   private ItemCollection itemcollection;
   private boolean updateindex;
+  private DocTypeInterpreter doctypeinterpreter;
 
   public void setItemDirectory(String itemdir) {
     this.itemdir = itemdir;
@@ -52,6 +54,10 @@ public class ItemIndexUpdater implements DBFieldGetter {
     this.updateindex = updateindex;
   }
 
+  public void setDocTypeInterpreter(DocTypeInterpreter doctypeinterpreter) {
+    this.doctypeinterpreter = doctypeinterpreter;
+  }
+  
   private Map readyfields;
 
   public String[] getFields(String itemid) {
@@ -89,6 +95,10 @@ public class ItemIndexUpdater implements DBFieldGetter {
           }
         }
       }
+      paramfields.add("manuscript");
+      fieldtypes.addElement(FieldTypeInfo.TYPE_BOOLEAN);
+      paramfields.add("published");
+      fieldtypes.addElement(FieldTypeInfo.TYPE_BOOLEAN);
 
       String[] paramnames = paramfields.toStringArray();
       int[] fieldtypearr = fieldtypes.asArray();
@@ -100,6 +110,9 @@ public class ItemIndexUpdater implements DBFieldGetter {
       int HAVE_TEXT_IND = ArrayUtil.indexOf(paramnames, "havetext");
       int HAVE_IMG_IND = ArrayUtil.indexOf(paramnames, "haveimages");
       int ITEM_IND = ArrayUtil.indexOf(paramnames, "identifier");
+      int DOCTYPE_IND = ArrayUtil.indexOf(paramnames, "documenttype");
+      int MANUSCRIPT_IND = ArrayUtil.indexOf(paramnames, "manuscript");
+      int PUBLISHED_IND = ArrayUtil.indexOf(paramnames, "published");
 
       while (true) {
         String[] fields = reader.reader.readNext();
@@ -113,7 +126,8 @@ public class ItemIndexUpdater implements DBFieldGetter {
             String field = fields[i];
             // this field will be indexed at all
             if (lookmaps[i] != null) {
-              if (field.trim().length() > 0 && !field.equals("0")) {
+              if (field.trim().length() > 0 && !field.equals("0") &&
+                  !field.equals(ItemFields.SYNTHESIZED)) {
 
                 // there is a subtable, look up the resolved value
                 String lookup = (String) lookmaps[i].get(field);
@@ -137,6 +151,9 @@ public class ItemIndexUpdater implements DBFieldGetter {
             : "false";
         redfields[HAVE_IMG_IND] = (details != null && details.hasimage) ? "true"
             : "false";
+        String doctype = redfields[DOCTYPE_IND];
+        redfields[MANUSCRIPT_IND] = doctypeinterpreter.isConciseType(doctype)? "false" : "true";
+        redfields[PUBLISHED_IND] = doctypeinterpreter.isConciseType(doctype)? "true" : "false";
 
         readyfields.put(id, redfields);
 
