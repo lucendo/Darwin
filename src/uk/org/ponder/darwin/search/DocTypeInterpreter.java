@@ -10,11 +10,9 @@ import uk.org.ponder.stringutil.StringSet;
 public class DocTypeInterpreter {
   public static final int BOOK = 1;
   public static final int PAMPHLET = 2;
-  public static final int BOOK_CHAPTER = 3;
-  public static final int INTRODUCTION = 4;
-  public static final int PREFACE = 5;
+  public static final int REVIEW = 3;
   public static final int PERIODICAL_CONTRIBUTION = 6;
-  public static final int DARWIN_EXTRACT = 7;
+  public static final int BOOK_CONTRIBUTIONT = 7;
   public static final int OFFPRINT = 8;
   public static final int ABSTRACT = 9;
   public static final int CORRESPONDENCE = 10;
@@ -26,7 +24,8 @@ public class DocTypeInterpreter {
   public static final int NOTE = 16;
   public static final int PHOTO = 17;
   public static final int PRINTED = 18;
-  public static final int REVIEW = 19;
+  
+  public static final int[] concise_types = new int[] {1, 2, 3, 6, 7, 8};
   
   private StringSet concises;
   
@@ -37,10 +36,9 @@ public class DocTypeInterpreter {
     FieldTypeInfo typeinfo = (FieldTypeInfo) ItemFieldRegistry.byDBField.get(ItemFields.PART_DOC_ID); 
     doctypes = (Map) fieldtables.getTableMap().get(typeinfo.indirectname);
     concises = new StringSet();
-    for (int i = 1; i <= 8; ++ i) {
-      concises.add(doctypes.get(Integer.toString(i)));
+    for (int i = 0; i < concise_types.length; ++ i) {
+      concises.add(doctypes.get(Integer.toString(concise_types[i])));
     }
-    concises.add(doctypes.get("19"));
   }
   
   public boolean isType(String stringval, int type) {

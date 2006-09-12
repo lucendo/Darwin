@@ -133,8 +133,11 @@ public class ContentParser extends BaseParser {
             }
           }
         }
+        catch (EOFException eofe) {
+          break;
+        }
         catch (Exception e) {
-          Logger.log.log(Level.INFO, e);
+          Logger.log.log(Level.WARN, "Error handling token", e);
           signalError(e.getMessage());
           if (e instanceof EOFException) {
             break;
