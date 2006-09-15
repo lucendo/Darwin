@@ -25,7 +25,7 @@
   </bean>
 
   <bean id="updateItemIndex" class="java.lang.Boolean">
-     <constructor-arg value="false"></constructor-arg>
+     <constructor-arg value="true"></constructor-arg>
   </bean>
 
   <bean id="reflectiveCache" class="uk.org.ponder.reflect.JDKReflectiveCache" />

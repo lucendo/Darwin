@@ -25,6 +25,7 @@ public class DarwinAnalyzer extends Analyzer {
   
   ReadInputStream ris;
   int readpos;
+  boolean intag = false;
   
   // can't   sea;   Magellan:   "that
   public static boolean isWordChar(char c) {
@@ -38,6 +39,7 @@ public class DarwinAnalyzer extends Analyzer {
   public TokenStream tokenStream(String fieldName, Reader reader) {
     ris = new ReaderRIS(reader);
     readpos = 0;
+    intag = false;
     return new TokenStream() {
       public Token next() {
         CharWrap build = new CharWrap();
@@ -47,9 +49,11 @@ public class DarwinAnalyzer extends Analyzer {
           char c = ris.get();
           if (ris.EOF()) break;
           ++readpos;
+          if (intag && c == '>') intag = false;
+          if (!intag && c == '<') intag = true;
           switch (state) {
           case STATE_OUTSIDE:
-            if (isCoreWordChar(c)) {
+            if (isCoreWordChar(c) && !intag) {
               build.append(Character.toLowerCase(c));
               start = readpos - 1;
               state = STATE_WORD;

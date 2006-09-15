@@ -155,6 +155,9 @@ public class ItemIndexUpdater implements DBFieldGetter {
         redfields[MANUSCRIPT_IND] = doctypeinterpreter.isConciseType(doctype)? "false" : "true";
         redfields[PUBLISHED_IND] = doctypeinterpreter.isConciseType(doctype)? "true" : "false";
 
+        if (readyfields.get(id) != null) {
+          Logger.log.warn("Warning: duplicate item with ID " + id);
+        }
         readyfields.put(id, redfields);
 
         if (updateindex) {
