@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.darwin.dates.ProtoDate;
 import uk.org.ponder.darwin.item.ItemCollection;
 import uk.org.ponder.darwin.item.ItemDetails;
 import uk.org.ponder.darwin.search.DocTypeInterpreter;
@@ -27,6 +28,9 @@ import uk.org.ponder.util.UniversalRuntimeException;
 // currently not Spring-configured since we are imagining indexing use from
 // the command line initially.
 public class ItemIndexUpdater implements DBFieldGetter {
+  
+  private static org.apache.log4j.Logger dblog = org.apache.log4j.Logger.getLogger("dblog");
+  
   private IndexBuilder builder;
   private String itemdir;
   private Map subtablemap;
@@ -99,6 +103,10 @@ public class ItemIndexUpdater implements DBFieldGetter {
       fieldtypes.addElement(FieldTypeInfo.TYPE_BOOLEAN);
       paramfields.add("published");
       fieldtypes.addElement(FieldTypeInfo.TYPE_BOOLEAN);
+      paramfields.add("startdate");
+      fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
+      paramfields.add("enddate");
+      fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
 
       String[] paramnames = paramfields.toStringArray();
       int[] fieldtypearr = fieldtypes.asArray();
@@ -113,7 +121,16 @@ public class ItemIndexUpdater implements DBFieldGetter {
       int DOCTYPE_IND = ArrayUtil.indexOf(paramnames, "documenttype");
       int MANUSCRIPT_IND = ArrayUtil.indexOf(paramnames, "manuscript");
       int PUBLISHED_IND = ArrayUtil.indexOf(paramnames, "published");
+      
+      int START_DATE_IND = ArrayUtil.indexOf(paramnames, "startdate");
+      int END_DATE_IND = ArrayUtil.indexOf(paramnames, "enddate");
 
+      int DATE_ORIG_IND = ArrayUtil.indexOf(reader.fieldnames, ItemFields.DATE);
+      
+      int invaliddates = 0;
+      int duplicates = 0;
+      int total = 0;
+      
       while (true) {
         String[] fields = reader.reader.readNext();
         if (fields == null)
@@ -155,16 +172,24 @@ public class ItemIndexUpdater implements DBFieldGetter {
         redfields[MANUSCRIPT_IND] = doctypeinterpreter.isConciseType(doctype)? "false" : "true";
         redfields[PUBLISHED_IND] = doctypeinterpreter.isConciseType(doctype)? "true" : "false";
 
+        ProtoDate protodate = new ProtoDate(id, fields[DATE_ORIG_IND]);
+        redfields[START_DATE_IND] = protodate.startdate;
+        redfields[END_DATE_IND] = protodate.enddate;
+        if (protodate.enddate == null) ++ invaliddates;
+        
         if (readyfields.get(id) != null) {
-          Logger.log.warn("Warning: duplicate item with ID " + id);
+          dblog.warn("Warning: duplicate item with ID " + id);
+          ++ duplicates;
         }
         readyfields.put(id, redfields);
 
         if (updateindex) {
           builder.checkItem(redfields);
         }
-
+        ++ total;
       }
+      dblog.warn(invaliddates + " invalid dates, " + duplicates + " duplicate entries found in "
+          + total + " items");
     }
     catch (Exception e) {
       throw UniversalRuntimeException.accumulate(e, "Error reading item file ");
@@ -172,6 +197,7 @@ public class ItemIndexUpdater implements DBFieldGetter {
     finally {
       builder.endUpdates();
     }
+   
     long delay = System.currentTimeMillis() - time;
     DecimalFormat df = new DecimalFormat("0.000");
     long size = builder.indexedbytes;

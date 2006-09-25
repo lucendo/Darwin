@@ -34,7 +34,9 @@ public class ItemFieldRegistry {
     new FieldTypeInfo(ItemFields.SYNTHESIZED, "manuscript", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.SYNTHESIZED, "published", FieldTypeInfo.TYPE_KEYWORD),
     
-    new FieldTypeInfo(ItemFields.DATESTRING, null, FieldTypeInfo.TYPE_STRING_NONINDEX),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "startdate", FieldTypeInfo.TYPE_KEYWORD),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "enddate", FieldTypeInfo.TYPE_KEYWORD),
+    new FieldTypeInfo(ItemFields.DATESTRING, "displaydate", FieldTypeInfo.TYPE_STRING_NONINDEX),
   };
   
   public static Map byDBField = new HashMap();

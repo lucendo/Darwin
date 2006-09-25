@@ -39,5 +39,5 @@ public class SearchParams {
   public Boolean havetext;
   public Boolean haveimages;
   
-  public String sort = SORT_RELEVANCE;
+  public String sort = SORT_DATEASC;
   }

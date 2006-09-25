@@ -10,7 +10,10 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.FilteredQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.RangeFilter;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
@@ -19,20 +22,19 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import uk.org.ponder.darwin.search.DocFields;
 import uk.org.ponder.darwin.search.FieldTypeInfo;
 import uk.org.ponder.darwin.search.ItemFieldRegistry;
-import uk.org.ponder.darwin.search.ItemFields;
 import uk.org.ponder.darwin.search.SearchParams;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
+import uk.org.ponder.stringutil.CharWrap;
 
 public class QueryBuilder {
-
   private SAXalizerMappingContext mappingcontext;
 
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.mappingcontext = mappingcontext;
   }
-  
+
   public static Sort convertSort(SearchParams params) {
     List fields = new ArrayList();
     if (params.sort.equals(SearchParams.SORT_RELEVANCE)) {
@@ -41,14 +43,13 @@ public class QueryBuilder {
     }
     else {
       if (params.sort.equals(SearchParams.SORT_DATEASC)) {
-        fields.add(new SortField(ItemFields.DATE, SortField.STRING, false));
+        fields.add(new SortField("startdate", SortField.STRING, false));
       }
       else if (params.sort.equals(SearchParams.SORT_DATEDESC)) {
-        fields.add(new SortField(ItemFields.DATE, SortField.STRING, true));
+        fields.add(new SortField("enddate", SortField.STRING, true));
       }
       else if (params.sort.equals(SearchParams.SORT_TITLE)) {
-        fields.add(new SortField(ItemFields.ATTRIBTITLE, SortField.STRING,
-            false));
+        fields.add(new SortField("attributedtitle", SortField.STRING, false));
       }
       fields.add(SortField.FIELD_SCORE);
     }
@@ -63,9 +64,31 @@ public class QueryBuilder {
     return q2;
   }
 
+  private String resolveDate(String value, boolean end) {
+    CharWrap togo = new CharWrap();
+    char fillchar = end ? '9'
+        : '0';
+    for (int i = 0; i < value.length(); ++i) {
+      char c = value.charAt(i);
+      if (Character.isDigit(c)) {
+        togo.append(c);
+        if (togo.size() == 4) {
+          togo.append(fillchar);
+        }
+      }
+    }
+
+    for (int i = 9 - togo.size(); i > 0; --i) {
+      togo.append(fillchar);
+    }
+    return togo.toString();
+  }
+
   public Query convertQuery(SearchParams params) throws ParseException {
     MethodAnalyser ma = mappingcontext.getAnalyser(SearchParams.class);
     QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
+    List filters = new ArrayList();
+    boolean freetext = false;
 
     BooleanQuery togo = new BooleanQuery();
 
@@ -86,7 +109,20 @@ public class QueryBuilder {
           // ignore
         }
         else if (field.equals("manuscripts")) {
-          
+
+        }
+        else if (field.equals("dateafter")) {
+          // see http://wiki.apache.org/jakarta-lucene/FilteringOptions
+          String resolved = resolveDate(value, false);
+          RangeFilter filter = new RangeFilter("startdate", resolved, null,
+              true, false);
+          filters.add(filter);
+        }
+        else if (field.equals("datebefore")) {
+          String resolved = resolveDate(value, true);
+          RangeFilter filter = new RangeFilter("enddate", null, resolved,
+              false, true);
+          filters.add(filter);
         }
         else if (!field.equals("freetext")) {
           FieldTypeInfo info = (FieldTypeInfo) ItemFieldRegistry.byParam
@@ -118,6 +154,16 @@ public class QueryBuilder {
         }
       }
     }
-    return togo;
+    
+    if (!freetext) {
+      togo.add(new TermQuery(new Term(DocFields.TYPE, DocFields.TYPE_ITEM)), Occur.MUST);
+    }
+    
+    Query toreallygo = togo;
+    for (int i = 0; i < filters.size(); ++i) {
+      toreallygo = new FilteredQuery(toreallygo, (Filter) filters.get(i));
+    }
+    return toreallygo;
   }
+
 }

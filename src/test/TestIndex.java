@@ -84,9 +84,9 @@ public class TestIndex {
       searchparams.identifier = "F*";
       testQuery(searcher, qb, searchparams );
       
-      searchparams.identifier = null;
-      searchparams.name = "Darwin";
-      testQuery(searcher, qb, searchparams );
+//      searchparams.identifier = null;
+//      searchparams.name = "Darwin";
+//      testQuery(searcher, qb, searchparams );
 
       ContentIndexUpdater ciu = (ContentIndexUpdater) cpxac
           .getBean("contentIndexUpdater");
