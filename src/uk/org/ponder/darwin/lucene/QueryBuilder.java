@@ -149,6 +149,7 @@ public class QueryBuilder {
           }
         }
         else {
+          freetext = true;
           Query q2 = qp2.parse(value);
           togo.add(q2, Occur.MUST);
         }
