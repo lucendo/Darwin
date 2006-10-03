@@ -107,6 +107,12 @@ public class ItemIndexUpdater implements DBFieldGetter {
       fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
       paramfields.add("enddate");
       fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
+      paramfields.add("searchid");
+      fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
+      paramfields.add("searchtitle");
+      fieldtypes.addElement(FieldTypeInfo.TYPE_FREE_STRING);
+      paramfields.add("sorttitle");
+      fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
 
       String[] paramnames = paramfields.toStringArray();
       int[] fieldtypearr = fieldtypes.asArray();
@@ -124,6 +130,9 @@ public class ItemIndexUpdater implements DBFieldGetter {
       
       int START_DATE_IND = ArrayUtil.indexOf(paramnames, "startdate");
       int END_DATE_IND = ArrayUtil.indexOf(paramnames, "enddate");
+      int SEARCH_ID_IND = ArrayUtil.indexOf(paramnames, "searchid");
+      int SEARCH_TITLE_IND = ArrayUtil.indexOf(paramnames, "searchtitle");
+      int SORT_TITLE_IND = ArrayUtil.indexOf(paramnames, "sorttitle");
 
       int DATE_ORIG_IND = ArrayUtil.indexOf(reader.fieldnames, ItemFields.DATE);
       
@@ -175,6 +184,13 @@ public class ItemIndexUpdater implements DBFieldGetter {
         ProtoDate protodate = new ProtoDate(id, fields[DATE_ORIG_IND]);
         redfields[START_DATE_IND] = protodate.startdate;
         redfields[END_DATE_IND] = protodate.enddate;
+        redfields[SEARCH_ID_IND] = id.toLowerCase();
+        String title = computeTitle(reader.fieldnames, fields);
+        if (title == null) {
+          dblog.warn("Warning: item " + id + " has all four potential title fields blank");
+        }
+        redfields[SEARCH_TITLE_IND] = title;
+        redfields[SORT_TITLE_IND] = title;
         if (protodate.enddate == null) ++ invaliddates;
         
         if (readyfields.get(id) != null) {
@@ -203,6 +219,34 @@ public class ItemIndexUpdater implements DBFieldGetter {
     long size = builder.indexedbytes;
     System.out.println("Indexed " + size + " bytes in " + delay + " ms: "
         + df.format((size / (delay * 1000.0))) + "Mb/s");
+  }
+
+  private String computeTitle(String[] fieldnames, String[] fields) {
+    // If it is ever worth it, reform fields to be a Map. Currently a [] so
+    // that it may be stored "compactly" so that full text index can find it
+    // quickly. We imagine indexing will occur infrequently.
+    String title = null;
+    int EXACT_IND = ArrayUtil.indexOf(fieldnames, ItemFields.TITLE);
+    title = fields[EXACT_IND];
+    if (title != null && !title.equals("")) {
+      return title;
+    }
+    int ATTRIB_IND = ArrayUtil.indexOf(fieldnames, ItemFields.ATTRIBTITLE);
+    title = fields[ATTRIB_IND];
+    if (title != null && !title.equals("")) {
+      return title;
+    }
+    int DESC_IND = ArrayUtil.indexOf(fieldnames, ItemFields.DESCRIPTION);
+    title = fields[DESC_IND];
+    if (title != null && !title.equals("")) {
+      return title;
+    }
+    int NAME_IND = ArrayUtil.indexOf(fieldnames, ItemFields.NAME);
+    title = fields[NAME_IND];
+    if (title != null && !title.equals("")) {
+      return title;
+    }
+    return null;
   }
 
 }

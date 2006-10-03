@@ -25,8 +25,9 @@ public class ItemFieldTables {
       String tablename = ItemFieldRegistry.tables[i];
       String tablepath = itemdir + FilenameUtil.filesep + tablename + ".txt";
       FieldTypeInfo fti = (FieldTypeInfo) ItemFieldRegistry.byColumn.get(tablename);
+      ItemCSVReader reader = null;
       try {
-        ItemCSVReader reader = new ItemCSVReader(tablepath, false);
+        reader = new ItemCSVReader(tablepath, false);
         TreeMap thisstm = new TreeMap();
         while (true) {
           String[] fields = reader.reader.readNext();
@@ -38,6 +39,16 @@ public class ItemFieldTables {
       }
       catch (Exception e) {
         Logger.log.warn("Error reading CSV file " + tablename, e);
+      }
+      finally {
+        if (reader != null && reader.reader != null) {
+          try {
+            reader.reader.close();
+          }
+          catch (Throwable t) {
+            Logger.log.warn("Error closing CSV file " + tablename, t);
+          }
+        }
       }
     }
   }

@@ -36,6 +36,9 @@ public class ItemFieldRegistry {
     
     new FieldTypeInfo(ItemFields.SYNTHESIZED, "startdate", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.SYNTHESIZED, "enddate", FieldTypeInfo.TYPE_KEYWORD),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "searchid", FieldTypeInfo.TYPE_KEYWORD),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "searchtitle", FieldTypeInfo.TYPE_FREE_STRING),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "sorttitle", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.DATESTRING, "displaydate", FieldTypeInfo.TYPE_STRING_NONINDEX),
   };
   

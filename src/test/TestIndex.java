@@ -78,10 +78,10 @@ public class TestIndex {
       iiu.update(); // this must happen before we point ContextIndexUpdater at
       // it
       SearchParams searchparams = new SearchParams();
-      searchparams.identifier = "F1652";
+      searchparams.searchid = "F1652";
       testQuery(searcher, qb, searchparams );
       
-      searchparams.identifier = "F*";
+      searchparams.searchid = "F*";
       testQuery(searcher, qb, searchparams );
       
 //      searchparams.identifier = null;

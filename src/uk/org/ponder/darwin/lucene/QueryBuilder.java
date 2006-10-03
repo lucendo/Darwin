@@ -49,7 +49,7 @@ public class QueryBuilder {
         fields.add(new SortField("enddate", SortField.STRING, true));
       }
       else if (params.sort.equals(SearchParams.SORT_TITLE)) {
-        fields.add(new SortField("attributedtitle", SortField.STRING, false));
+        fields.add(new SortField("sorttitle", SortField.STRING, false));
       }
       fields.add(SortField.FIELD_SCORE);
     }
@@ -124,11 +124,16 @@ public class QueryBuilder {
               false, true);
           filters.add(filter);
         }
+        else if (field.equals("searchid")) {
+          String tofind = value.trim().toLowerCase();
+          togo.add(new TermQuery(new Term(field, tofind)), Occur.MUST);
+        }
         else if (!field.equals("freetext")) {
           FieldTypeInfo info = (FieldTypeInfo) ItemFieldRegistry.byParam
               .get(field);
           if (info.fieldtype == FieldTypeInfo.TYPE_FREE_STRING) {
-            Query q2 = qp2.parse(field + ":" + value);
+            QueryParser qp3 = new QueryParser(field, new DarwinAnalyzer());
+            Query q2 = qp3.parse(field + ":" + value);
             togo.add(q2, Occur.MUST);
           }
           else if (info.fieldtype == FieldTypeInfo.TYPE_KEYWORD
@@ -149,9 +154,9 @@ public class QueryBuilder {
           }
         }
         else {
-          freetext = true;
           Query q2 = qp2.parse(value);
           togo.add(q2, Occur.MUST);
+          freetext = true;
         }
       }
     }

@@ -19,15 +19,14 @@ public class SearchParams {
   };
   
   public String freetext;
-  public String identifier;
+  public String searchid;
   public String dateafter;
   public String datebefore;
   public String reference;
   public String[] language;
   public String[] documenttype;
   public String place;
-  public String attributedtitle;
-  public String exacttitle;
+  public String searchtitle;
   public String publisher;
   public String periodical;
   public String description;
