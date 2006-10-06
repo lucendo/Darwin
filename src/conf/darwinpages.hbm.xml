@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="uk.org.ponder.darwin.pages">
+
+  <class name="PageCount" table="pagecount">
+    <id name="id" type="integer">
+      <generator class="native" />
+    </id>
+    <property name="URL" type="string" not-null="true" length="255" />
+    <property name="URLHash" type="string" not-null="true" length="18"
+      index="URLHashIndex" />
+    <property name="count" type="integer" />
+  </class>
+
+  <class name="StartDate" table="startdate">
+    <id name="id" type="integer">
+      <generator class="native" />
+    </id>
+    <property name="date" type="timestamp" />
+  </class>
+
+</hibernate-mapping>

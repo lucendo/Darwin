@@ -1,0 +1,8 @@
+14:35:07) daniel@cbcl.co.uk: mysql> create database darwinpages default character set utf8;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> grant all on darwinpages.* to darwinuser identified by 'resuniwrad';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> flush privileges;
+Query OK, 0 rows affected (0.00 sec)
