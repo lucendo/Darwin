@@ -10,7 +10,7 @@
       <generator class="native" />
     </id>
     <property name="URL" type="string" not-null="true" length="255" />
-    <property name="URLHash" type="string" not-null="true" length="18"
+    <property name="URLHash" type="string" not-null="true" length="24"
       index="URLHashIndex" />
     <property name="count" type="integer" />
   </class>

@@ -20,7 +20,7 @@ public class PageCountDAOImpl extends HibernateDaoSupport implements
     String hash = CountUtil.getURLHash(URL);
     List res = template
         .findByNamedParam(
-            "from PageCount as count where count.URLHash = :hash", "hash",
+            "from PageCount pcount where pcount.URLHash = :hash", "hash",
             hash);
     int cres = res.size();
     PageCount count = null;
@@ -30,12 +30,12 @@ public class PageCountDAOImpl extends HibernateDaoSupport implements
     else {
       count = (PageCount) res.get(0);
       count.setCount(count.getCount() + 1);
-      template.save(count);
       if (cres != 1) {
         Logger.log.warn("Found " + cres + " results for URL query " + URL
             + " hash " + hash);
       }
     }
+    template.saveOrUpdate(count);
     return count.getCount();
   }
 

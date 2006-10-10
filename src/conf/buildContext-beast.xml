@@ -16,7 +16,7 @@
   </bean>
   <bean id="indexDirectory" class="java.lang.String">
     <constructor-arg>
-      <value>/home/darwin/lucene-index</value>
+      <value>/home/darwin/temp-lucene-index</value>
     </constructor-arg>
   </bean>
   <!--  whether to ignore file date staleness in updating free text index -->
