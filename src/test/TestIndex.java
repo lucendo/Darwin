@@ -5,6 +5,7 @@ package test;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryParser.QueryParser.Operator;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -93,7 +94,8 @@ public class TestIndex {
 
       ciu.update();
 
-      QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
+      QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer(false));
+      qp2.setDefaultOperator(Operator.AND);
       Query q2 = qp2.parse("iceberg");
       testTextQuery(searcher, q2);
     }

@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.darwin.lucene;
 
-
 import java.io.StringReader;
 
 import org.apache.lucene.analysis.TokenStream;
@@ -19,15 +18,21 @@ import uk.org.ponder.darwin.search.DocFields;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class DarwinHighlighter {
-  public static String getHighlightedHit(Query unrwquery, String pagetext, IndexReader reader) {
+  public static String getHighlightedHit(Query unrwquery, String pagetext,
+      IndexReader reader) {
     try {
-    Query query = unrwquery.rewrite(reader);
-    Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter(),
-        new SimpleHTMLEncoder(), new QueryScorer(query));
-    highlighter.setTextFragmenter(new SimpleFragmenter(500));
-    DarwinAnalyzer analyzer = new DarwinAnalyzer();
-    TokenStream ts = analyzer.tokenStream(DocFields.TEXT, new StringReader(pagetext));
-    return highlighter.getBestFragment(ts, pagetext);
+      Query query = unrwquery.rewrite(reader);
+      Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter(),
+          new SimpleHTMLEncoder(), new QueryScorer(query));
+      highlighter.setTextFragmenter(new SimpleFragmenter(500));
+      DarwinAnalyzer analyzer = new DarwinAnalyzer(true);
+      TokenStream ts = analyzer.tokenStream(DocFields.TEXT, new StringReader(
+          pagetext));
+      String rendered = highlighter.getBestFragment(ts, pagetext);
+      if (rendered == null) {
+        throw new IllegalArgumentException("No rendered spans discovered for query " + query);
+      }
+      return rendered;
     }
     catch (Exception e) {
       throw UniversalRuntimeException.accumulate(e, "Error highlighting hit: ");

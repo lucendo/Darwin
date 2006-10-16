@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryParser.QueryParser.Operator;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.FilteredQuery;
@@ -59,7 +60,8 @@ public class QueryBuilder {
   }
 
   public Query freeQuery(String freetext) throws ParseException {
-    QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
+    QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer(false));
+    qp2.setDefaultOperator(Operator.AND);
     Query q2 = qp2.parse(freetext);
     return q2;
   }
@@ -86,7 +88,7 @@ public class QueryBuilder {
 
   public Query convertQuery(SearchParams params) throws ParseException {
     MethodAnalyser ma = mappingcontext.getAnalyser(SearchParams.class);
-    QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer());
+    QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer(false));
     List filters = new ArrayList();
     boolean freetext = false;
 
@@ -132,7 +134,8 @@ public class QueryBuilder {
           FieldTypeInfo info = (FieldTypeInfo) ItemFieldRegistry.byParam
               .get(field);
           if (info.fieldtype == FieldTypeInfo.TYPE_FREE_STRING) {
-            QueryParser qp3 = new QueryParser(field, new DarwinAnalyzer());
+            QueryParser qp3 = new QueryParser(field, new DarwinAnalyzer(false));
+            qp3.setDefaultOperator(Operator.AND);
             Query q2 = qp3.parse(field + ":" + value);
             togo.add(q2, Occur.MUST);
           }
