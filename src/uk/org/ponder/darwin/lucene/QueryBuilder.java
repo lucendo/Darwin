@@ -88,7 +88,6 @@ public class QueryBuilder {
 
   public Query convertQuery(SearchParams params) throws ParseException {
     MethodAnalyser ma = mappingcontext.getAnalyser(SearchParams.class);
-    QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer(false));
     List filters = new ArrayList();
     boolean freetext = false;
 
@@ -157,6 +156,8 @@ public class QueryBuilder {
           }
         }
         else {
+          QueryParser qp2 = new QueryParser(DocFields.TEXT, new DarwinAnalyzer(false));
+          qp2.setDefaultOperator(Operator.AND);
           Query q2 = qp2.parse(value);
           togo.add(q2, Occur.MUST);
           freetext = true;
