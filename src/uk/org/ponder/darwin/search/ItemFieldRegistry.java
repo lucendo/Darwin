@@ -17,7 +17,6 @@ public class ItemFieldRegistry {
     new FieldTypeInfo(DocFields.ITEMID, "identifier", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.TITLE, "exacttitle", FieldTypeInfo.TYPE_FREE_STRING),
     new FieldTypeInfo(ItemFields.ATTRIBTITLE, "attributedtitle", FieldTypeInfo.TYPE_FREE_STRING),
-    new FieldTypeInfo(ItemFields.TITLE, "exacttitle", FieldTypeInfo.TYPE_FREE_STRING),
     new FieldTypeInfo(ItemFields.CONCISE, "reference", FieldTypeInfo.TYPE_FREE_STRING),
     new FieldTypeInfo(ItemFields.LANGUAGE_ID, "language", FieldTypeInfo.TYPE_KEYWORD, "Language", 2),
     new FieldTypeInfo(ItemFields.PLACE_ID, "place", FieldTypeInfo.TYPE_FREE_STRING, "Place", 1),
