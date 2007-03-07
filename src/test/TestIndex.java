@@ -64,7 +64,7 @@ public class TestIndex {
   public static void main(String[] args) {
 
     ClassPathXmlApplicationContext cpxac = new ClassPathXmlApplicationContext(
-        "conf/" + args[0]);
+        new String[] {"conf/buildContext-core.xml", "conf/" + args[0]});
 
     PageInfo testinfo = new PageInfo();
     testinfo.contentfile = "E:\\flowtalk-jakarta-tomcat-5.5.9\\webapps\\Darwin\\converted\\1835_letters_F1.html";

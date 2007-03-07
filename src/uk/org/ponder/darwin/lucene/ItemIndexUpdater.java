@@ -184,7 +184,7 @@ public class ItemIndexUpdater implements DBFieldGetter {
         ProtoDate protodate = new ProtoDate(id, fields[DATE_ORIG_IND]);
         redfields[START_DATE_IND] = protodate.startdate;
         redfields[END_DATE_IND] = protodate.enddate;
-        redfields[SEARCH_ID_IND] = id.toLowerCase();
+        redfields[SEARCH_ID_IND] = id;
         String title = computeTitle(reader.fieldnames, fields);
         if (title == null) {
           dblog.warn("Warning: item " + id + " has all four potential title fields blank");
