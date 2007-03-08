@@ -30,12 +30,12 @@ public class ItemFieldRegistry {
     new FieldTypeInfo(ItemFields.HAVE_DIGITAL, "havetext", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.HAVE_FACS, "haveimages", FieldTypeInfo.TYPE_KEYWORD),
     
-    new FieldTypeInfo(ItemFields.SYNTHESIZED, "manuscript", FieldTypeInfo.TYPE_KEYWORD),
-    new FieldTypeInfo(ItemFields.SYNTHESIZED, "published", FieldTypeInfo.TYPE_KEYWORD),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "manuscript", FieldTypeInfo.TYPE_BOOLEAN),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "published", FieldTypeInfo.TYPE_BOOLEAN),
     
     new FieldTypeInfo(ItemFields.SYNTHESIZED, "startdate", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.SYNTHESIZED, "enddate", FieldTypeInfo.TYPE_KEYWORD),
-    new FieldTypeInfo(ItemFields.SYNTHESIZED, "searchid", FieldTypeInfo.TYPE_STRING_SIMPLE),
+    new FieldTypeInfo(ItemFields.SYNTHESIZED, "searchid", FieldTypeInfo.TYPE_FREE_STRING), // special-cased in indexer and query
     new FieldTypeInfo(ItemFields.SYNTHESIZED, "searchtitle", FieldTypeInfo.TYPE_FREE_STRING),
     new FieldTypeInfo(ItemFields.SYNTHESIZED, "sorttitle", FieldTypeInfo.TYPE_KEYWORD),
     new FieldTypeInfo(ItemFields.DATESTRING, "displaydate", FieldTypeInfo.TYPE_STRING_NONINDEX),

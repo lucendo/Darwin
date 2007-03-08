@@ -68,6 +68,13 @@ public class ItemIndexUpdater implements DBFieldGetter {
     return (String[]) readyfields.get(itemid);
   }
 
+
+  private void addField(StringList paramfields, intVector fieldtypes, String fieldname) {
+    paramfields.add(fieldname);
+    FieldTypeInfo fti = (FieldTypeInfo) ItemFieldRegistry.byParam.get(fieldname);
+    fieldtypes.addElement(fti.fieldtype);
+  }
+  
   public void update() {
     long time = System.currentTimeMillis();
     readyfields = new HashMap();
@@ -99,20 +106,14 @@ public class ItemIndexUpdater implements DBFieldGetter {
           }
         }
       }
-      paramfields.add("manuscript");
-      fieldtypes.addElement(FieldTypeInfo.TYPE_BOOLEAN);
-      paramfields.add("published");
-      fieldtypes.addElement(FieldTypeInfo.TYPE_BOOLEAN);
-      paramfields.add("startdate");
-      fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
-      paramfields.add("enddate");
-      fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
-      paramfields.add("searchid");
-      fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
-      paramfields.add("searchtitle");
-      fieldtypes.addElement(FieldTypeInfo.TYPE_FREE_STRING);
-      paramfields.add("sorttitle");
-      fieldtypes.addElement(FieldTypeInfo.TYPE_KEYWORD);
+      // Add all sythesized fields to the type map
+      addField(paramfields, fieldtypes, "published");
+      addField(paramfields, fieldtypes, "manuscript");
+      addField(paramfields, fieldtypes, "startdate");
+      addField(paramfields, fieldtypes, "enddate");
+      addField(paramfields, fieldtypes, "searchid");
+      addField(paramfields, fieldtypes, "searchtitle");
+      addField(paramfields, fieldtypes, "sorttitle");
 
       String[] paramnames = paramfields.toStringArray();
       int[] fieldtypearr = fieldtypes.asArray();

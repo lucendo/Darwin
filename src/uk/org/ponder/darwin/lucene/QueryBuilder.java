@@ -6,6 +6,8 @@ package uk.org.ponder.darwin.lucene;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -126,8 +128,9 @@ public class QueryBuilder {
           filters.add(filter);
         }
         else if (field.equals("searchid")) {
-          String tofind = value.trim().toLowerCase();
-          togo.add(new TermQuery(new Term(field, tofind)), Occur.MUST);
+          QueryParser qp4 = new QueryParser(field, new WhitespaceAnalyzer());
+          Query q4 = qp4.parse(field + ":" + value);
+          togo.add(q4, Occur.MUST);
         }
         else if (!field.equals("freetext")) {
           FieldTypeInfo info = (FieldTypeInfo) ItemFieldRegistry.byParam

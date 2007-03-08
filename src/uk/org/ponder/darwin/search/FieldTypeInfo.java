@@ -10,7 +10,6 @@ public class FieldTypeInfo {
   public static final int TYPE_DATE = 3;
   public static final int TYPE_KEYWORD = 4;
   public static final int TYPE_STRING_NONINDEX = 5;
-  public static final int TYPE_STRING_SIMPLE = 6;
   
   public String DBfieldname;
   public String paramname;
