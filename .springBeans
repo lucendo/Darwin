@@ -4,13 +4,21 @@
 		<configExtension>xml</configExtension>
 	</configExtensions>
 	<configs>
+		<config>src/conf/buildContext-core.xml</config>
+		<config>src/conf/buildContext-beast.xml</config>
+		<config>src/conf/buildContext-home.xml</config>
+		<config>src/conf/buildContext-big.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
 			<name>BuildContext</name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
-			<incomplete>false</incomplete>
+			<incomplete>true</incomplete>
 			<configs>
+				<config>src/conf/buildContext-beast.xml</config>
+				<config>src/conf/buildContext-big.xml</config>
+				<config>src/conf/buildContext-core.xml</config>
+				<config>src/conf/buildContext-home.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

@@ -31,6 +31,7 @@ public class SearchParams {
   public String periodical;
   public String description;
   public String name;
+  public String allfields;
   
   public Boolean manuscript;
   public Boolean published;

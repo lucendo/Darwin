@@ -6,8 +6,7 @@ package uk.org.ponder.darwin.lucene;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.lucene.analysis.SimpleAnalyzer;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -33,11 +32,12 @@ import uk.org.ponder.stringutil.CharWrap;
 
 public class QueryBuilder {
   private SAXalizerMappingContext mappingcontext;
+  private Analyzer analyzer = AnalyzerFactory.getAnalyzer();
 
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.mappingcontext = mappingcontext;
   }
-
+  
   public static Sort convertSort(SearchParams params) {
     List fields = new ArrayList();
     if (params.sort.equals(SearchParams.SORT_RELEVANCE)) {
@@ -128,9 +128,11 @@ public class QueryBuilder {
           filters.add(filter);
         }
         else if (field.equals("searchid")) {
-          QueryParser qp4 = new QueryParser(field, new WhitespaceAnalyzer());
-          Query q4 = qp4.parse(field + ":" + value);
-          togo.add(q4, Occur.MUST);
+          if (value.length() >= 3) {
+            QueryParser qp4 = new QueryParser(field, analyzer);
+            Query q4 = qp4.parse(field + ":" + value + "*");
+            togo.add(q4, Occur.MUST);
+          }
         }
         else if (!field.equals("freetext")) {
           FieldTypeInfo info = (FieldTypeInfo) ItemFieldRegistry.byParam

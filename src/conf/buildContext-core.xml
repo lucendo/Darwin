@@ -38,7 +38,7 @@
     factory-method="getItemCollection" />
 
   <bean id="analyzer" class="uk.org.ponder.darwin.lucene.AnalyzerFactory"
-   factory-method="getAnalyzer" />
+    factory-method="getAnalyzer" />
 
   <bean id="indexBuilder" class="uk.org.ponder.darwin.lucene.IndexBuilder"
     init-method="open" destroy-method="close">

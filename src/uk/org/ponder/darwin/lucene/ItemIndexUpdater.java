@@ -20,6 +20,7 @@ import uk.org.ponder.darwin.search.ItemFieldTables;
 import uk.org.ponder.darwin.search.ItemFields;
 import uk.org.ponder.intutil.Algorithms;
 import uk.org.ponder.intutil.intVector;
+import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.FilenameUtil;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
@@ -114,6 +115,7 @@ public class ItemIndexUpdater implements DBFieldGetter {
       addField(paramfields, fieldtypes, "searchid");
       addField(paramfields, fieldtypes, "searchtitle");
       addField(paramfields, fieldtypes, "sorttitle");
+      addField(paramfields, fieldtypes, "allfields");
 
       String[] paramnames = paramfields.toStringArray();
       int[] fieldtypearr = fieldtypes.asArray();
@@ -134,6 +136,7 @@ public class ItemIndexUpdater implements DBFieldGetter {
       int SEARCH_ID_IND = ArrayUtil.indexOf(paramnames, "searchid");
       int SEARCH_TITLE_IND = ArrayUtil.indexOf(paramnames, "searchtitle");
       int SORT_TITLE_IND = ArrayUtil.indexOf(paramnames, "sorttitle");
+      int ALL_FIELDS_IND = ArrayUtil.indexOf(paramnames, "allfields");
 
       int DATE_ORIG_IND = ArrayUtil.indexOf(reader.fieldnames, ItemFields.DATE);
       
@@ -192,6 +195,8 @@ public class ItemIndexUpdater implements DBFieldGetter {
         }
         redfields[SEARCH_TITLE_IND] = title;
         redfields[SORT_TITLE_IND] = title;
+        String allfields = computeAllFields(redfields, fieldtypes);
+        redfields[ALL_FIELDS_IND] = allfields;
         if (protodate.enddate == null) ++ invaliddates;
         
         if (readyfields.get(id) != null) {
@@ -222,6 +227,16 @@ public class ItemIndexUpdater implements DBFieldGetter {
         + df.format((size / (delay * 1000.0))) + "Mb/s");
   }
 
+  private String computeAllFields(String[] redfields, intVector fieldtypes) {
+    CharWrap allfields = new CharWrap();
+    for (int i = 0; i < fieldtypes.size(); ++ i) {
+      if (redfields[i] != null && fieldtypes.intAt(i) == FieldTypeInfo.TYPE_FREE_STRING) {
+        allfields.append(redfields[i]).append(" ");
+      }
+    }
+    return allfields.toString();
+  }
+  
   private String computeTitle(String[] fieldnames, String[] fields) {
     // If it is ever worth it, reform fields to be a Map. Currently a [] so
     // that it may be stored "compactly" so that full text index can find it

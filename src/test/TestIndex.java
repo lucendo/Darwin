@@ -82,7 +82,7 @@ public class TestIndex {
       searchparams.searchid = "F1652";
       testQuery(searcher, qb, searchparams );
       
-      searchparams.searchid = "F*";
+      searchparams.searchid = "F16";
       testQuery(searcher, qb, searchparams );
       
 //      searchparams.identifier = null;
