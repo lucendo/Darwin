@@ -87,7 +87,12 @@ public class QueryBuilder {
     }
     return togo.toString();
   }
-
+  /** Returns <code>false</code> if a wildcard search would return too much **/
+  private static boolean censorWildcard(boolean wildcard, String value, String prefix) {
+    return wildcard 
+     &&!(value.toLowerCase().startsWith(prefix) && (value.length() < prefix.length() + 2));
+  }
+  
   public Query convertQuery(SearchParams params) throws ParseException {
     MethodAnalyser ma = mappingcontext.getAnalyser(SearchParams.class);
     List filters = new ArrayList();
@@ -128,11 +133,12 @@ public class QueryBuilder {
           filters.add(filter);
         }
         else if (field.equals("searchid")) {
-          if (value.length() >= 3) {
-            QueryParser qp4 = new QueryParser(field, analyzer);
-            Query q4 = qp4.parse(field + ":" + value + "*");
-            togo.add(q4, Occur.MUST);
-          }
+          boolean wildcard = true;
+          wildcard = censorWildcard(wildcard, value, "f");
+          wildcard = censorWildcard(wildcard, value, "cul-dar");
+          QueryParser qp4 = new QueryParser(field, analyzer);
+          Query q4 = qp4.parse(field + ":" + value + (wildcard? "*" : ""));
+          togo.add(q4, Occur.MUST);
         }
         else if (!field.equals("freetext")) {
           FieldTypeInfo info = (FieldTypeInfo) ItemFieldRegistry.byParam
