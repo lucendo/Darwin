@@ -16,35 +16,35 @@ public class ProtoDate {
   public boolean imprecise;
   public boolean editorial;
 
-  public ProtoDate(String id, String gillmadness) {
+  public ProtoDate(String id, String protoString) {
     try {
-      parseGillMadness(id, gillmadness);
+      parseProtoString(id, protoString);
     }
     catch (Exception e) {
-      dblog.warn("Invalid date " + gillmadness + " for item " + id
+      dblog.warn("Invalid date " + protoString + " for item " + id
           + ": " + e.getMessage());
     }
   }
 
-  // Some samples of madness:
+  // Some samples of protoString:
   // [1864].08.25--[1864].08.26
   // [1865.02.]15
   // 1882
   // 00.00.14
 
   // target: YYYYUMMDD
-  private void parseGillMadness(String id, String gillmadness) {
-    uncertain = gillmadness.indexOf('?') != -1;
-    imprecise = gillmadness.indexOf("ca") != -1;
-    editorial = gillmadness.indexOf('[') != -1;
+  private void parseProtoString(String id, String protoString) {
+    uncertain = protoString.indexOf('?') != -1;
+    imprecise = protoString.indexOf("ca") != -1;
+    editorial = protoString.indexOf('[') != -1;
 
-    if (gillmadness.indexOf("nd") != -1) {
+    if (protoString.indexOf("nd") != -1) {
       startdate = "999999999";
       enddate = "000000000";
       return;
     }
 
-    String reduced = reduceMadness(gillmadness);
+    String reduced = reduceProtoString(protoString);
     String[] split = reduced.split("-");
     if (split.length == 0 || split.length > 2) {
       throw new IllegalArgumentException("More than 2 date components");
@@ -107,11 +107,11 @@ public class ProtoDate {
     return comps[0] + uChar(start) + comps[1] + comps[2];
   }
 
-  private String reduceMadness(String gillmadness) {
+  private String reduceProtoString(String protoString) {
     CharWrap reduced = new CharWrap();
     boolean doneminus = false;
-    for (int i = 0; i < gillmadness.length(); ++i) {
-      char c = gillmadness.charAt(i);
+    for (int i = 0; i < protoString.length(); ++i) {
+      char c = protoString.charAt(i);
       if (Character.isDigit(c) || c == '.') {
         reduced.append(c);
       }
