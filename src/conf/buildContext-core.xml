@@ -5,7 +5,7 @@
 <beans>
   <bean id="reflectiveCache" class="uk.org.ponder.reflect.JDKReflectiveCache" />
 
-  <bean id="staticLeafParser" class="uk.org.ponder.conversion.StaticLeafParser" />
+  <bean id="generalLeafParser" class="uk.org.ponder.conversion.GeneralLeafParser" />
 
 
   <bean id="containerTypeRegistry"
@@ -22,7 +22,7 @@
   <bean id="mappingContext"
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
     <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="staticLeafParser" ref="staticLeafParser" />
+    <property name="generalLeafParser" ref="generalLeafParser" />
     <property name="defaultInferrer" ref="ELDefaultInferrer" />
   </bean>
 

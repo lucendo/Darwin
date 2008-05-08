@@ -25,9 +25,9 @@ import uk.org.ponder.darwin.search.DocFields;
 import uk.org.ponder.darwin.search.FieldTypeInfo;
 import uk.org.ponder.darwin.search.ItemFieldRegistry;
 import uk.org.ponder.darwin.search.SearchParams;
-import uk.org.ponder.saxalizer.MethodAnalyser;
-import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
+import uk.org.ponder.saxalizer.support.MethodAnalyser;
+import uk.org.ponder.saxalizer.support.SAXAccessMethod;
 import uk.org.ponder.stringutil.CharWrap;
 
 public class QueryBuilder {
@@ -53,6 +53,9 @@ public class QueryBuilder {
       }
       else if (params.sort.equals(SearchParams.SORT_TITLE)) {
         fields.add(new SortField("sorttitle", SortField.STRING, false));
+      }
+      else if (params.sort.equals(SearchParams.SORT_IDENTIFIER)) {
+        fields.add(new SortField("searchid", SortField.STRING, false));
       }
       fields.add(SortField.FIELD_SCORE);
     }

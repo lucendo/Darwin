@@ -227,6 +227,9 @@ public class IndexBuilder implements IndexForceOpener {
   }
 
   private void addDBFields(Document doc, String[] fields) {
+    if (fields[0].equals("CUL-DAR134.12")) {
+      System.out.println("DAR");
+    }
     for (int i = 0; i < fieldnames.length; ++i) {
       String field = fields[i];
       if (field != null && field.trim().length() > 0) {

@@ -9,13 +9,14 @@ public class SearchParams {
   public static final String SORT_DATEASC = "date-ascending";
   public static final String SORT_DATEDESC = "date-descending";
   public static final String SORT_TITLE = "title";
+  public static final String SORT_IDENTIFIER = "identifier";
   
   public static final String[] SORT_OPTIONS = new String[] {
-    SORT_RELEVANCE, SORT_DATEASC, SORT_DATEDESC, SORT_TITLE
+    SORT_RELEVANCE, SORT_DATEASC, SORT_DATEDESC, SORT_TITLE, SORT_IDENTIFIER
   };
   
   public static final String[] SORT_OPTIONS_NAMES = new String[] {
-    "Relevance", "Oldest To Most Recent", "Most Recent To Oldest", "Title"
+    "Relevance", "Oldest To Most Recent", "Most Recent To Oldest", "Title", "Identifier"
   };
   
   public String freetext;
