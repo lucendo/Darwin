@@ -17,6 +17,10 @@ public class ItemChecks {
       CheckStatistics togo) {
     for (Iterator itemit = collection.getItems().iterator(); itemit.hasNext();) {
       ItemDetails details = (ItemDetails) itemit.next();
+      if (details.haspdf && details.pages.size() == 0) {
+         togo.errors.add("PDF file " + details.pdffile + " corresponds to item ID " + details.ID 
+             + " which has no page data");
+      }
 
       for (int i = 1; i < details.pages.size(); ++i) {
         String location = "Page with sequence " + i + " of item with ID "

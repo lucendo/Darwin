@@ -39,6 +39,7 @@ public class SearchParams {
   
   public Boolean havetext;
   public Boolean haveimages;
+  public Boolean havepdf;
   
   public String sort = SORT_DATEASC;
   }

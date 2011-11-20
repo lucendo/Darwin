@@ -25,5 +25,5 @@ public class DocFields {
   
   public static final String HAS_TEXT = "has-text";
   public static final String HAS_IMAGES = "has-images";
-  
+  public static final String HAS_PDF = "has-pdf";
 }

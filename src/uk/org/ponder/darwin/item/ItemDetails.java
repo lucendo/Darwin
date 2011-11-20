@@ -20,6 +20,9 @@ public class ItemDetails {
   public boolean hasimage;
   /** Set to <code>true</code> if this book supplies ANY textual content **/
   public boolean hastext;
+  /** Set to <code>true</code> if this book has a PDF version available **/
+  public boolean haspdf;
+  public String pdffile;
   /** This is a list of PageInfo */
   public List pages = new ArrayList();
   public void addPageInfo(PageInfo pageinfo) {

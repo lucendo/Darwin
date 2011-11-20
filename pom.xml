@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>darwin</artifactId>
+  <name>Darwin Site and Search Engine</name>
+  <packaging>jar</packaging>
+  <groupId>darwin</groupId>
+  <parent>
+    <groupId>uk.org.ponder.pure-poms</groupId>
+    <artifactId>standard-jar</artifactId>
+    <version>POM-3</version>
+  </parent>
+  <properties>
+  <rsfutil.version>0.7.4</rsfutil.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <version>1.1</version>
+  <organization>
+    <name>Lucendo Development Ltd.</name>
+    <url>http:/ponder.org.uk</url>
+  </organization>
+  <inceptionYear>2005</inceptionYear>
+  <description>
+    Servlet-independent definitions for Darwin Online project
+  </description>
+  <repositories>
+    <repository>
+      <id>CARET-Maven2</id>
+      <name>CARET Maven 2 Repository</name>
+      <url>http://www2.caret.cam.ac.uk/maven2</url>
+    </repository>
+  </repositories>
+  <developers>
+    <developer>
+      <id>amb26</id>
+      <name>Antranig Basman</name>
+      <email>antranig@ponder.org.uk</email>
+      <url>http://ponder.org.uk</url>
+      <organization>Lucendo Development Ltd.</organization>
+      <roles>
+        <role>Developer</role>
+        <role>Project Manager</role>
+      </roles>
+      <timezone>0</timezone>
+      <properties />
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>MIT Licence</name>
+      <url>
+       http://www.opensource.org/licenses/mit-license.php
+      </url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <dependencies>
+    <dependency>
+      <groupId>uk.org.ponder.rsfutil</groupId>
+      <artifactId>rsfutil</artifactId>
+      <version>${rsfutil.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>1.9.1</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>2.5.4</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>lucene</groupId>
+      <artifactId>highlighter</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>1.3</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src</directory>
+        <targetPath>.</targetPath>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

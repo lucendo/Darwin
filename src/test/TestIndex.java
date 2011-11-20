@@ -76,8 +76,7 @@ public class TestIndex {
       QueryBuilder qb = (QueryBuilder) cpxac.getBean("queryBuilder");
       IndexSearcher searcher = (IndexSearcher) cpxac.getBean("indexSearcher");
 
-      iiu.update(); // this must happen before we point ContextIndexUpdater at
-      // it
+      iiu.update(); // this must happen before we point ContextIndexUpdater at it
       SearchParams searchparams = new SearchParams();
       searchparams.searchid = "F1652";
       testQuery(searcher, qb, searchparams );
@@ -85,9 +84,12 @@ public class TestIndex {
       searchparams.searchid = "F16";
       testQuery(searcher, qb, searchparams );
       
-//      searchparams.identifier = null;
-//      searchparams.name = "Darwin";
-//      testQuery(searcher, qb, searchparams );
+      searchparams.searchid = null;
+      searchparams.allfields = "Sequard";
+      testQuery(searcher, qb, searchparams );
+      
+      searchparams.allfields = "Séquard";
+      testQuery(searcher, qb, searchparams );
 
       ContentIndexUpdater ciu = (ContentIndexUpdater) cpxac
           .getBean("contentIndexUpdater");

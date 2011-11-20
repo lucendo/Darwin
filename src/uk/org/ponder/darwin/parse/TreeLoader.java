@@ -74,6 +74,19 @@ public class TreeLoader {
               + ": " + e);
         }
       }
+      else if (Extensions.isPDFFile(extension)) {
+        try {
+          PDFFilename pdffile = PDFFilename.parse(filename);
+          ItemDetails details = collection.getItemSafe(pdffile.ID);
+          details.pdffile = filename;
+          details.haspdf = true;
+        }
+        catch (Exception e) {
+          allerrors.add("Skipping unrecognised PDF filename " + filename);
+          Logger.log.warn("Skipping unrecognised PDF filename " + filename
+              + ": " + e);
+        }
+      }
       else {
         Logger.log.warn("Warning: file " + filename
             + " with unrecognised extension was skipped");

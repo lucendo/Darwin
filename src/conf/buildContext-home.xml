@@ -5,13 +5,13 @@
 <beans>
   <bean id="contentRoot" class="java.lang.String">
     <constructor-arg>
-      <value>E:\workspace\DarwinServlet\src\webapp\converted</value>
+      <value>E:\Source\gits\DarwinServlet\src\webapp\converted</value>
     </constructor-arg>
   </bean>
 
   <bean id="itemDirectory" class="java.lang.String">
     <constructor-arg>
-      <value>E:\workspace\DarwinServlet\src\webapp\database</value>
+      <value>E:\Source\gits\DarwinServlet\src\webapp\database</value>
     </constructor-arg>
   </bean>
   <bean id="indexDirectory" class="java.lang.String">

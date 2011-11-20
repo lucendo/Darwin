@@ -28,6 +28,10 @@ public class Extensions {
     return false;
   }
   
+  public static boolean isPDFFile(String extension) {
+     return extension.equals("pdf");
+  }
+  
   public static String getMIMEType(String extension) {
     for (int i = 0; i < imgextns.length; ++ i) {
       if (extension.equals(imgextns[i])) return mimetypes[i];

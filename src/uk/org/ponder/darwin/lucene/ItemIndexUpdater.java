@@ -108,6 +108,7 @@ public class ItemIndexUpdater implements DBFieldGetter {
         }
       }
       // Add all sythesized fields to the type map
+      addField(paramfields, fieldtypes, "havepdf");
       addField(paramfields, fieldtypes, "published");
       addField(paramfields, fieldtypes, "manuscript");
       addField(paramfields, fieldtypes, "startdate");
@@ -126,6 +127,7 @@ public class ItemIndexUpdater implements DBFieldGetter {
 
       int HAVE_TEXT_IND = ArrayUtil.indexOf(paramnames, "havetext");
       int HAVE_IMG_IND = ArrayUtil.indexOf(paramnames, "haveimages");
+      int HAVE_PDF_IND = ArrayUtil.indexOf(paramnames, "havepdf");
       int ITEM_IND = ArrayUtil.indexOf(paramnames, "identifier");
       int DOCTYPE_IND = ArrayUtil.indexOf(paramnames, "documenttype");
       int MANUSCRIPT_IND = ArrayUtil.indexOf(paramnames, "manuscript");
@@ -177,10 +179,10 @@ public class ItemIndexUpdater implements DBFieldGetter {
         String id = redfields[ITEM_IND];
         ItemDetails details = itemcollection.getItem(id);
 
-        redfields[HAVE_TEXT_IND] = (details != null && details.hastext) ? "true"
-            : "false";
-        redfields[HAVE_IMG_IND] = (details != null && details.hasimage) ? "true"
-            : "false";
+        redfields[HAVE_TEXT_IND] = (details != null && details.hastext) ? "true" : "false";
+        redfields[HAVE_IMG_IND] = (details != null && details.hasimage) ? "true" : "false";
+        redfields[HAVE_PDF_IND] = (details != null && details.haspdf) ? "true" : "false";
+        
         String doctype = redfields[DOCTYPE_IND];
         redfields[MANUSCRIPT_IND] = doctypeinterpreter.isConciseType(doctype)? "false" : "true";
         redfields[PUBLISHED_IND] = doctypeinterpreter.isConciseType(doctype)? "true" : "false";
@@ -189,12 +191,13 @@ public class ItemIndexUpdater implements DBFieldGetter {
         redfields[START_DATE_IND] = protodate.startdate;
         redfields[END_DATE_IND] = protodate.enddate;
         redfields[SEARCH_ID_IND] = id;
-        String title = computeTitle(reader.fieldnames, fields);
-        if (title == null) {
+        String searchtitle = computeTitle(reader.fieldnames, fields, false);
+        if (searchtitle.equals("")) {
           dblog.warn("Warning: item " + id + " has all four potential title fields blank");
         }
-        redfields[SEARCH_TITLE_IND] = title;
-        redfields[SORT_TITLE_IND] = title;
+        redfields[SEARCH_TITLE_IND] = searchtitle;
+        String sorttitle = computeTitle(reader.fieldnames, fields, true);
+        redfields[SORT_TITLE_IND] = sorttitle;
         String allfields = computeAllFields(redfields, fieldtypes);
         redfields[ALL_FIELDS_IND] = allfields;
         if (protodate.enddate == null) ++ invaliddates;
@@ -237,32 +240,32 @@ public class ItemIndexUpdater implements DBFieldGetter {
     return allfields.toString();
   }
   
-  private String computeTitle(String[] fieldnames, String[] fields) {
+  private String computeTitle(String[] fieldnames, String[] fields, boolean display) {
     // If it is ever worth it, reform fields to be a Map. Currently a [] so
     // that it may be stored "compactly" so that full text index can find it
     // quickly. We imagine indexing will occur infrequently.
-    String title = null;
+    String title = "";
     int EXACT_IND = ArrayUtil.indexOf(fieldnames, ItemFields.TITLE);
-    title = fields[EXACT_IND];
-    if (title != null && !title.equals("")) {
-      return title;
-    }
+    title = accumTitle(title, fields[EXACT_IND], display);
+
     int ATTRIB_IND = ArrayUtil.indexOf(fieldnames, ItemFields.ATTRIBTITLE);
-    title = fields[ATTRIB_IND];
-    if (title != null && !title.equals("")) {
-      return title;
-    }
+    title = accumTitle(title, fields[ATTRIB_IND], display);
+    
     int DESC_IND = ArrayUtil.indexOf(fieldnames, ItemFields.DESCRIPTION);
-    title = fields[DESC_IND];
-    if (title != null && !title.equals("")) {
-      return title;
-    }
+    title = accumTitle(title, fields[DESC_IND], display);
+    
     int NAME_IND = ArrayUtil.indexOf(fieldnames, ItemFields.NAME);
-    title = fields[NAME_IND];
-    if (title != null && !title.equals("")) {
-      return title;
+    title = accumTitle(title, fields[NAME_IND], display);
+    title = title.trim();
+    
+    return title;
+  }
+
+  private String accumTitle(String title, String addTitle, boolean display) {
+    if (addTitle != null) {
+        title = display? (title.equals("")? addTitle: title) : title + " " + addTitle;
     }
-    return null;
+    return title;
   }
 
 }

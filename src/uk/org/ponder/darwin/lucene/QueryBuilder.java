@@ -36,8 +36,10 @@ public class QueryBuilder {
 
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.mappingcontext = mappingcontext;
+    // TODO: Apparently we can resolve prefix explosion difficulties with PrefixFilter in Lucene 3+
+    BooleanQuery.setMaxClauseCount(16384);
   }
-  
+    
   public static Sort convertSort(SearchParams params) {
     List fields = new ArrayList();
     if (params.sort.equals(SearchParams.SORT_RELEVANCE)) {
@@ -93,7 +95,7 @@ public class QueryBuilder {
   /** Returns <code>false</code> if a wildcard search would return too much **/
   private static boolean censorWildcard(boolean wildcard, String value, String prefix) {
     return wildcard 
-     &&!(value.toLowerCase().startsWith(prefix) && (value.length() < prefix.length() + 2));
+     &&!(value.toLowerCase().startsWith(prefix) && (value.length() < prefix.length() + 1));
   }
   
   public Query convertQuery(SearchParams params) throws ParseException {
@@ -137,6 +139,10 @@ public class QueryBuilder {
         }
         else if (field.equals("searchid")) {
           boolean wildcard = true;
+          value = value.toLowerCase();
+          if (value.startsWith("dar")) { // Troll edict 06/08/2011
+              value = "cul-" + value;
+          }
           wildcard = censorWildcard(wildcard, value, "f");
           wildcard = censorWildcard(wildcard, value, "cul-dar");
           QueryParser qp4 = new QueryParser(field, analyzer);
@@ -158,8 +164,7 @@ public class QueryBuilder {
               BooleanQuery ors = new BooleanQuery();
               String[] valuel = (String[]) valueo;
               for (int j = 0; j < valuel.length; ++j) {
-                ors
-                    .add(new TermQuery(new Term(field, valuel[j])),
+                ors.add(new TermQuery(new Term(field, valuel[j])),
                         Occur.SHOULD);
               }
               togo.add(ors, Occur.MUST);

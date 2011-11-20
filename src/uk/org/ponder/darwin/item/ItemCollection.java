@@ -5,7 +5,6 @@ package uk.org.ponder.darwin.item;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.TreeMap;
