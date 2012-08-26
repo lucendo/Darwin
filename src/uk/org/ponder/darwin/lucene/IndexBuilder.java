@@ -227,9 +227,6 @@ public class IndexBuilder implements IndexForceOpener {
   }
 
   private void addDBFields(Document doc, String[] fields) {
-    if (fields[0].equals("CUL-DAR134.12")) {
-      System.out.println("DAR");
-    }
     for (int i = 0; i < fieldnames.length; ++i) {
       String field = fields[i];
       if (field != null && field.trim().length() > 0) {
@@ -273,7 +270,6 @@ public class IndexBuilder implements IndexForceOpener {
         .toString(pagetag.pageseq), Store.YES, Index.UN_TOKENIZED));
 //    doc.add(new Field(DocFields.PAGESEQ_END, Integer
 //        .toString(contentinfo.lastpage), Store.YES, Index.UN_TOKENIZED));
-
     doc.add(new Field(DocFields.TEXT, new StringReader(pagetag.pagetext),
         TermVector.WITH_POSITIONS_OFFSETS));
     doc.add(new Field(DocFields.FLAT_TEXT, pagetag.pagetext, Store.YES,

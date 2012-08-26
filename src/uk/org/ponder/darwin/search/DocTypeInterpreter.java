@@ -37,7 +37,10 @@ public class DocTypeInterpreter {
     doctypes = (Map) fieldtables.getTableMap().get(typeinfo.indirectname);
     concises = new StringSet();
     for (int i = 0; i < concise_types.length; ++ i) {
-      concises.add(doctypes.get(Integer.toString(concise_types[i])));
+      String docType = (String) doctypes.get(Integer.toString(concise_types[i]));
+      if (docType != null) {
+        concises.add(docType);
+      }
     }
   }
   

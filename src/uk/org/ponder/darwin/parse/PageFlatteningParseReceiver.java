@@ -29,11 +29,18 @@ public class PageFlatteningParseReceiver implements ParseReceiver {
 
   int[] limits = new int[2];
   private FlatteningProcessor processor = new FlatteningProcessor();
+  private static char[] space = {' '};
 
   public void text(XmlPullParser parser, int token, CharWrap text) {
-    if (editable && token == XmlPullParser.TEXT) {
-      char[] chars = parser.getTextCharacters(limits);
-      processor.acceptChars(chars, limits[0], limits[1]);
+    // Troll issue of 26/08/12 - &mdash; is elided completely leading to word-run
+    if (editable) {
+      if (token == XmlPullParser.TEXT) {
+        char[] chars = parser.getTextCharacters(limits);
+        processor.acceptChars(chars, limits[0], limits[1]);
+      }
+      else if (token == XmlPullParser.ENTITY_REF) {
+        processor.acceptChars(space, 0, 1);
+      }
     }
   }
 
